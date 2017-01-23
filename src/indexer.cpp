@@ -4,6 +4,9 @@
 Indexer::Indexer(string refFile){
     mRefFile = refFile;
     mReference = new FastaReader(refFile);
+    mReference->readAll();
+    mUniquePos = 0;
+    mDupePos = 0;
 }
 
 Indexer::~Indexer() {
@@ -36,6 +39,7 @@ void Indexer::makeIndex(vector<Fusion>& fusions) {
 void Indexer::indexContig(int ctg, string seq) {
     for(int i=0; i<seq.length() - KMER; ++i) {
         unsigned long kmer = makeKmer(seq, i);
+        //cout << kmer << "\t" << seq.substr(i, KMER) << endl;
         if(kmer < 0)
             continue;
         GenePos site;
@@ -54,9 +58,14 @@ void Indexer::indexContig(int ctg, string seq) {
                 gps.push_back(site);
                 mDupeList.push_back(gps);
                 // and mark it as a dupe
-                mKmerPos['kmer'].contig = -1;
-                mKmerPos['kmer'].position = mDupeList.size() -1;
+                mKmerPos[kmer].contig = -1;
+                mKmerPos[kmer].position = mDupeList.size() -1;
+                mUniquePos--;
+                mDupePos++;
             }
+        } else {
+            mKmerPos[kmer]=site;
+            mUniquePos++;
         }
     }
 }
@@ -80,7 +89,14 @@ long Indexer::makeKmer(string & seq, int pos) {
             default:
                 return -1;
         }
-        kmer = kmer << 2;
+        // not the tail
+        if(i<KMER-1)
+            kmer = kmer << 2;
     }
     return kmer;
+}
+
+void Indexer::printStat() {
+    cout<<"mUniquePos:"<<mUniquePos<<endl;
+    cout<<"mDupePos:"<<mDupePos<<endl;
 }

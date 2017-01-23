@@ -32,6 +32,7 @@ public:
     ~Indexer();
     void makeIndex(vector<Fusion>& fusions);
     void indexContig(int ctg, string seq);
+    void printStat();
 
 public:
     map<long, GenePos> mKmerPos;
@@ -43,6 +44,8 @@ private:
 private:
     string mRefFile;
     FastaReader* mReference;
+    int mUniquePos;
+    int mDupePos;
 };
 
 
