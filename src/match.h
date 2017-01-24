@@ -13,6 +13,13 @@
 
 using namespace std;
 
+/*
+*                          refBreak
+*  ref: ---------------------- ++++++++++++++++++++++++++++++
+* read:           ------------ ------------
+*                         readBreak
+*/
+
 class Match{
 public:
     Match(Read* r, int readBreak, int refBreak, int distance, bool reversed = false);

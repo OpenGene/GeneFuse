@@ -1,8 +1,9 @@
 #include "indexer.h"
 #include "util.h"
 
-Indexer::Indexer(string refFile){
+Indexer::Indexer(string refFile, vector<Fusion>& fusions) {
     mRefFile = refFile;
+    mFusions = fusions;
     mReference = new FastaReader(refFile);
     mReference->readAll();
     mUniquePos = 0;
@@ -14,31 +15,34 @@ Indexer::~Indexer() {
     mReference = NULL;
 }
 
-void Indexer::makeIndex(vector<Fusion>& fusions) {
+void Indexer::makeIndex() {
     if(mReference == NULL)
         return ;
 
     map<string, string> ref = mReference->mAllContigs;
-    for(int ctg=0; ctg<fusions.size(); ctg++){
-        Gene gene = fusions[ctg].mGene;
+    for(int ctg=0; ctg<mFusions.size(); ctg++){
+        Gene gene = mFusions[ctg].mGene;
         string chr = gene.mChr;
         if(ref.count(chr) == 0) {
             if(ref.count("chr" + chr) >0)
                 chr = "chr" + chr;
             else if(ref.count(replace(chr, "chr", "")) >0)
                 chr = replace(chr, "chr", "");
-            else
+            else{
+                mFusionSeq.push_back("");
                 continue;
+            }
         }
         string s = ref[chr].substr(gene.mStart, gene.mEnd - gene.mStart);
         str2upper(s);
+        mFusionSeq.push_back(s);
         indexContig(ctg, s);
     }
 }
 
 void Indexer::indexContig(int ctg, string seq) {
     for(int i=0; i<seq.length() - KMER; ++i) {
-        unsigned long kmer = makeKmer(seq, i);
+        long kmer = makeKmer(seq, i);
         //cout << kmer << "\t" << seq.substr(i, KMER) << endl;
         if(kmer < 0)
             continue;
@@ -47,7 +51,7 @@ void Indexer::indexContig(int ctg, string seq) {
         site.position = i;
         // this is a dupe
         if(mKmerPos.count(kmer) >0 ){
-            GenePos gp = mKmerPos['kmer'];
+            GenePos gp = mKmerPos[kmer];
             // already marked as a dupe
             if(gp.contig < 0) {
                 mDupeList[gp.position].push_back(site);
@@ -67,6 +71,18 @@ void Indexer::indexContig(int ctg, string seq) {
             mKmerPos[kmer]=site;
             mUniquePos++;
         }
+    }
+}
+
+vector<GenePos> Indexer::mapRead(Read* r) {
+    string seq = r->mSeq.mStr;
+    const int step = 1;
+    for(int i=0; i<seq.length() - KMER; i += step) {
+        long kmer = makeKmer(seq, i);
+        if(kmer < 0)
+            continue;
+        if(mKmerPos.count(kmer) <0 )
+            continue;
     }
 }
 
@@ -96,7 +112,31 @@ long Indexer::makeKmer(string & seq, int pos) {
     return kmer;
 }
 
+long Indexer::gp2long(const GenePos& gp){
+    long ret = gp.position;
+    return (ret<<16) + gp.contig;
+}
+
+GenePos Indexer::long2gp(const long val){
+    GenePos gp;
+    gp.contig = (val & 0xFFFF);
+    gp.position = val >> 16;
+    return gp;
+}
+
 void Indexer::printStat() {
     cout<<"mUniquePos:"<<mUniquePos<<endl;
     cout<<"mDupePos:"<<mDupePos<<endl;
+}
+
+bool Indexer::test() {
+    GenePos gp;
+    gp.contig = 5;
+    gp.position = 35792;
+    long val = gp2long(gp);
+    GenePos gp2 = long2gp(val);
+    long val2 = gp2long(gp2);
+    cout << val << "," << val2 <<endl;
+    cout << gp2.contig << ", " << gp2.position << endl;
+    return val == val2;
 }

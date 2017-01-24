@@ -17,7 +17,4 @@ FusionScan::FusionScan(string fusionFile, string refFile, string read1File, stri
 
 bool FusionScan::scan(){
     vector<Fusion> fusions = Fusion::parseCsv(mFusionFile);
-    Indexer indexer(mRefFile);
-    indexer.makeIndex(fusions);
-    indexer.printStat();
 }

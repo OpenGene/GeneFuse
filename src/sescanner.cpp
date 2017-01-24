@@ -15,11 +15,20 @@ SingleEndScanner::SingleEndScanner(string fusionFile, string refFile, string rea
     mHtmlFile = html;
     mProduceFinished = false;
     mThreadNum = threadNum;
+    mFusionMapper = NULL;
+}
+
+SingleEndScanner::~SingleEndScanner() {
+    if(mFusionMapper != NULL) {
+        delete mFusionMapper;
+        mFusionMapper = NULL;
+    }
 }
 
 bool SingleEndScanner::scan(){
 
     fusionList = Fusion::parseCsv(mFusionFile);
+    mFusionMapper = new FusionMapper(mRefFile, fusionList);
 
     fusionMatches = new vector<Match*>[fusionList.size()];
     for(int i=0;i<fusionList.size();i++){

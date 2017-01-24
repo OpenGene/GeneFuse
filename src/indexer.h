@@ -28,22 +28,30 @@ struct GenePos{
 
 class Indexer{
 public:
-    Indexer(string refFile);
+    Indexer(string refFile, vector<Fusion>& fusions);
     ~Indexer();
-    void makeIndex(vector<Fusion>& fusions);
+    void makeIndex();
     void indexContig(int ctg, string seq);
     void printStat();
+
+    static inline long makeKmer(string & seq, int pos);
+    static inline long gp2long(const GenePos& gp);
+    static inline GenePos long2gp(const long val);
+
+    vector<GenePos> mapRead(Read* r);
+
+    static bool test();
 
 public:
     map<long, GenePos> mKmerPos;
     vector<vector<GenePos>> mDupeList;
+    vector<string> mFusionSeq;
 
-private:
-    inline long makeKmer(string & seq, int pos);
 
 private:
     string mRefFile;
     FastaReader* mReference;
+    vector<Fusion> mFusions;
     int mUniquePos;
     int mDupePos;
 };

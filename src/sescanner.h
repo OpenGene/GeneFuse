@@ -11,6 +11,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+#include "fusionmapper.h"
 
 
 using namespace std;
@@ -38,6 +39,7 @@ typedef struct ReadRepository ReadRepository;
 class SingleEndScanner{
 public:
     SingleEndScanner(string fusionFile, string refFile, string read1File, string html="", int threadnum=1);
+    ~SingleEndScanner();
     bool scan();
     void textReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches);
     void htmlReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches);
@@ -64,6 +66,7 @@ private:
     vector<Match*> *fusionMatches;
     std::mutex mFusionMtx;
     int mThreadNum;
+    FusionMapper* mFusionMapper;
 };
 
 
