@@ -27,5 +27,9 @@ void FusionMapper::init(){
 }
 
 Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
+    map<long, int> mapping = mIndexer->mapRead(r);
+    if(mapping[0]>20){
+        r->print();
+    }
     return NULL;
 }

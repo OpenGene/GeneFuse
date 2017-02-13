@@ -36,9 +36,13 @@ public:
 
     static inline long makeKmer(string & seq, int pos);
     static inline long gp2long(const GenePos& gp);
+    static inline GenePos shift(const GenePos& gp, int i);
     static inline GenePos long2gp(const long val);
 
-    vector<GenePos> mapRead(Read* r);
+    // map the read onto the reference
+    // return a map, with key is the first-base-mapped GenePos encoded in long, value is the count of this GenePos
+    // GenePos encoded with 0 means not mapped
+    map<long, int> mapRead(Read* r);
 
     static bool test();
 
@@ -46,6 +50,7 @@ public:
     map<long, GenePos> mKmerPos;
     vector<vector<GenePos>> mDupeList;
     vector<string> mFusionSeq;
+
 
 
 private:

@@ -78,12 +78,12 @@ bool SingleEndScanner::scanSingleEnd(ReadPack* pack){
         Read* r1 = pack->data[p];
         Read* rcr1 = r1->reverseComplement();
         for(int i=0;i<fusionList.size();i++){
-            Match* matchR1 = NULL;//TODO: fusionList[i].searchInRead(r1);
+            Match* matchR1 = mFusionMapper->mapRead(r1);
             if(matchR1){
                 matchR1->addOriginalRead(r1);
                 pushMatch(i, matchR1);
             }
-            Match* matchRcr1 = NULL;//TODO: fusionList[i].searchInRead(rcr1);
+            Match* matchRcr1 = mFusionMapper->mapRead(rcr1);
             if(matchRcr1){
                 matchRcr1->addOriginalRead(r1);
                 matchRcr1->setReversed(true);

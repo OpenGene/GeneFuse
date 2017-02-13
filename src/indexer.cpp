@@ -74,7 +74,9 @@ void Indexer::indexContig(int ctg, string seq) {
     }
 }
 
-vector<GenePos> Indexer::mapRead(Read* r) {
+map<long, int> Indexer::mapRead(Read* r) {
+    map<long, int> ret;
+    ret[0]=0;
     string seq = r->mSeq.mStr;
     const int step = 1;
     for(int i=0; i<seq.length() - KMER; i += step) {
@@ -82,8 +84,27 @@ vector<GenePos> Indexer::mapRead(Read* r) {
         if(kmer < 0)
             continue;
         if(mKmerPos.count(kmer) <0 )
-            continue;
+            ret[0]++;
+
+        GenePos gp = mKmerPos[kmer];
+        // is a dupe
+        if(gp.contig < 0) {
+            for(int g=0; g<mDupeList[gp.position].size();g++) {
+                long gplong = gp2long(shift(mDupeList[gp.position][g], i));
+                if(ret.count(gplong)==0)
+                    ret[gplong] = 1;
+                else
+                    ret[gplong] += 1;
+            }
+        } else {
+            long gplong = gp2long(shift(gp, i));
+            if(ret.count(gplong)==0)
+                ret[gplong] = 1;
+            else
+                ret[gplong] += 1;
+        }
     }
+    return ret;
 }
 
 long Indexer::makeKmer(string & seq, int pos) {
@@ -122,6 +143,13 @@ GenePos Indexer::long2gp(const long val){
     gp.contig = (val & 0xFFFF);
     gp.position = val >> 16;
     return gp;
+}
+
+GenePos Indexer::shift(const GenePos& gp, int i){
+    GenePos gpNew;
+    gpNew.contig = gp.contig;
+    gpNew.position = gp.position - i;
+    return gpNew;
 }
 
 void Indexer::printStat() {
