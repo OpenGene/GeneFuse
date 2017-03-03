@@ -65,6 +65,7 @@ bool SingleEndScanner::scan(){
     for(int i=0;i<fusionList.size();i++){
         fusionMatches[i].clear();
     }
+    return true;
 }
 
 void SingleEndScanner::pushMatch(int i, Match* m){
@@ -77,18 +78,16 @@ bool SingleEndScanner::scanSingleEnd(ReadPack* pack){
     for(int p=0;p<pack->count;p++){
         Read* r1 = pack->data[p];
         Read* rcr1 = r1->reverseComplement();
-        for(int i=0;i<fusionList.size();i++){
-            Match* matchR1 = mFusionMapper->mapRead(r1);
-            if(matchR1){
-                matchR1->addOriginalRead(r1);
-                pushMatch(i, matchR1);
-            }
-            Match* matchRcr1 = mFusionMapper->mapRead(rcr1);
-            if(matchRcr1){
-                matchRcr1->addOriginalRead(r1);
-                matchRcr1->setReversed(true);
-                pushMatch(i, matchRcr1);
-            }
+        Match* matchR1 = mFusionMapper->mapRead(r1);
+        if(matchR1){
+            matchR1->addOriginalRead(r1);
+            pushMatch(0, matchR1);
+        }
+        Match* matchRcr1 = mFusionMapper->mapRead(rcr1);
+        if(matchRcr1){
+            matchRcr1->addOriginalRead(r1);
+            matchRcr1->setReversed(true);
+            pushMatch(0, matchRcr1);
         }
         delete r1;
         delete rcr1;

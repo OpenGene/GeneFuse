@@ -79,11 +79,14 @@ map<long, int> Indexer::mapRead(Read* r) {
     ret[0]=0;
     string seq = r->mSeq.mStr;
     const int step = 1;
-    for(int i=0; i<seq.length() - KMER; i += step) {
+    int seqlen = seq.length();
+    // first pass, we only want to find if this seq can be partially aligned to the target
+    for(int i=0; i< seqlen - KMER; i += step) {
         long kmer = makeKmer(seq, i);
         if(kmer < 0)
             continue;
-        if(mKmerPos.count(kmer) <0 )
+        // no match
+        if(mKmerPos.count(kmer) <=0 )
             ret[0]++;
 
         GenePos gp = mKmerPos[kmer];
@@ -103,6 +106,19 @@ map<long, int> Indexer::mapRead(Read* r) {
             else
                 ret[gplong] += 1;
         }
+    }
+    // get top hit
+    long topGP = 0;
+    int topCount = 0;
+    map<long, int>::iterator iter;
+    for(iter = ret.begin(); iter!=ret.end(); iter++){
+        if(iter->first != 0 && iter->second > topCount){
+            topGP = iter->first;
+            topCount = iter->second;
+        }  
+    }
+    if(topCount < 20){
+        // return null;
     }
     return ret;
 }
@@ -134,14 +150,14 @@ long Indexer::makeKmer(string & seq, int pos) {
 }
 
 long Indexer::gp2long(const GenePos& gp){
-    long ret = gp.position;
-    return (ret<<16) + gp.contig;
+    long ret = gp.contig;
+    return (ret<<32) + gp.position;
 }
 
 GenePos Indexer::long2gp(const long val){
     GenePos gp;
-    gp.contig = (val & 0xFFFF);
-    gp.position = val >> 16;
+    gp.position = (val & 0xFFFFFFFF);
+    gp.contig = val >> 32;
     return gp;
 }
 

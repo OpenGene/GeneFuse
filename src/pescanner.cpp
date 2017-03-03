@@ -16,11 +16,20 @@ PairEndScanner::PairEndScanner(string fusionFile, string refFile, string read1Fi
     mHtmlFile = html;
     mProduceFinished = false;
     mThreadNum = threadNum;
+    mFusionMapper = NULL;
+}
+
+PairEndScanner::~PairEndScanner() {
+    if(mFusionMapper != NULL) {
+        delete mFusionMapper;
+        mFusionMapper = NULL;
+    }
 }
 
 bool PairEndScanner::scan(){
 
     fusionList = Fusion::parseCsv(mFusionFile);
+    mFusionMapper = new FusionMapper(mRefFile, fusionList);
 
     fusionMatches = new vector<Match*>[fusionList.size()];
     for(int i=0;i<fusionList.size();i++){
@@ -57,6 +66,7 @@ bool PairEndScanner::scan(){
     for(int i=0;i<fusionList.size();i++){
         fusionMatches[i].clear();
     }
+    return true;
 }
 
 void PairEndScanner::pushMatch(int i, Match* m){
@@ -80,44 +90,42 @@ bool PairEndScanner::scanPairEnd(ReadPairPack* pack){
             rcr1 = r1->reverseComplement();
             rcr2 = r2->reverseComplement();
         }
-        for(int i=0;i<fusionList.size();i++){
-            // if merged successfully, we only search the merged
-            if(merged != NULL) {
-                Match* matchMerged = NULL;//TODO: fusionList[i].searchInRead(merged);
-                if(matchMerged){
-                    matchMerged->addOriginalPair(pair);
-                    pushMatch(i, matchMerged);
-                }
-                Match* matchMergedRC = NULL;//TODO: fusionList[i].searchInRead(mergedRC);
-                if(matchMergedRC){
-                    matchMergedRC->addOriginalPair(pair);
-                    pushMatch(i, matchMergedRC);
-                }
-                continue;
+        // if merged successfully, we only search the merged
+        if(merged != NULL) {
+            Match* matchMerged = mFusionMapper->mapRead(merged);
+            if(matchMerged){
+                matchMerged->addOriginalPair(pair);
+                pushMatch(0, matchMerged);
             }
-            // else still search R1 and R2 separatedly
-            Match* matchR1 = NULL;//TODO: fusionList[i].searchInRead(r1);
-            if(matchR1){
-                matchR1->addOriginalPair(pair);
-                pushMatch(i, matchR1);
+            Match* matchMergedRC = mFusionMapper->mapRead(mergedRC);
+            if(matchMergedRC){
+                matchMergedRC->addOriginalPair(pair);
+                pushMatch(0, matchMergedRC);
             }
-            Match* matchR2 = NULL;//TODO: fusionList[i].searchInRead(r2);
-            if(matchR2){
-                matchR2->addOriginalPair(pair);
-                pushMatch(i, matchR2);
-            }
-            Match* matchRcr1 = NULL;//TODO: fusionList[i].searchInRead(rcr1);
-            if(matchRcr1){
-                matchRcr1->addOriginalPair(pair);
-                matchRcr1->setReversed(true);
-                pushMatch(i, matchRcr1);
-            }
-            Match* matchRcr2 = NULL;//TODO: fusionList[i].searchInRead(rcr2);
-            if(matchRcr2){
-                matchRcr2->addOriginalPair(pair);
-                matchRcr2->setReversed(true);
-                pushMatch(i, matchRcr2);
-            }
+            continue;
+        }
+        // else still search R1 and R2 separatedly
+        Match* matchR1 = mFusionMapper->mapRead(r1);
+        if(matchR1){
+            matchR1->addOriginalPair(pair);
+            pushMatch(0, matchR1);
+        }
+        Match* matchR2 = mFusionMapper->mapRead(r2);
+        if(matchR2){
+            matchR2->addOriginalPair(pair);
+            pushMatch(0, matchR2);
+        }
+        Match* matchRcr1 = mFusionMapper->mapRead(rcr1);
+        if(matchRcr1){
+            matchRcr1->addOriginalPair(pair);
+            matchRcr1->setReversed(true);
+            pushMatch(0, matchRcr1);
+        }
+        Match* matchRcr2 = mFusionMapper->mapRead(rcr2);
+        if(matchRcr2){
+            matchRcr2->addOriginalPair(pair);
+            matchRcr2->setReversed(true);
+            pushMatch(0, matchRcr2);
         }
         delete pair;
         if(merged!=NULL){
