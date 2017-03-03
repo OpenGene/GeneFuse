@@ -88,7 +88,6 @@ map<long, int> Indexer::mapRead(Read* r) {
         // no match
         if(mKmerPos.count(kmer) <=0 )
             ret[0]++;
-
         GenePos gp = mKmerPos[kmer];
         // is a dupe
         if(gp.contig < 0) {
@@ -107,20 +106,60 @@ map<long, int> Indexer::mapRead(Read* r) {
                 ret[gplong] += 1;
         }
     }
-    // get top hit
-    long topGP = 0;
-    int topCount = 0;
+    // get 1st and 2nd hit
+    long gp1 = 0;
+    int count1 = 0;
+    long gp2 = 0;
+    int count2 = 0;
     map<long, int>::iterator iter;
     for(iter = ret.begin(); iter!=ret.end(); iter++){
-        if(iter->first != 0 && iter->second > topCount){
-            topGP = iter->first;
-            topCount = iter->second;
+        if(iter->first != 0 && iter->second > count1){
+            gp2 = gp1;
+            count2 = count1;
+            gp1 = iter->first;
+            count1 = iter->second;
+        }  else if(iter->first != 0 && iter->second > count2 ){
+            gp2 = iter->first;
+            count2 = iter->second;
         }  
     }
-    if(topCount < 20){
+    if(count1 < 20){
         // return null;
     }
+
+    unsigned char* mask = new unsigned char[seqlen];
+    memset(mask, 0, sizeof(unsigned char)*seqlen);
+    // second pass, make the mask
+    for(int i=0; i< seqlen - KMER; i += step) {
+        long kmer = makeKmer(seq, i);
+        if(kmer < 0 || mKmerPos.count(kmer))
+            continue;
+        GenePos gp = mKmerPos[kmer];
+        // is a dupe
+        if(gp.contig < 0) {
+            for(int g=0; g<mDupeList[gp.position].size();g++) {
+                long gplong = gp2long(shift(mDupeList[gp.position][g], i));
+                if(abs(gplong - gp1) <= 1)
+                    makeMask(mask, GC_TOP, seqlen, i, KMER);
+                else if(abs(gplong - gp2) <= 1)
+                    makeMask(mask, GC_SECOND, seqlen, i, KMER);
+            }
+        } else {
+            long gplong = gp2long(shift(gp, i));
+            if(abs(gplong - gp1) <= 1)
+                    makeMask(mask, GC_TOP, seqlen, i, KMER);
+            else if(abs(gplong - gp2) <= 1)
+                makeMask(mask, GC_SECOND, seqlen, i, KMER);
+        }
+    }
+
+
     return ret;
+}
+
+void Indexer::makeMask(unsigned char* mask, unsigned char flag, int seqlen, int start, int kmerSize) {
+    for(int i=start;i<seqlen && i<start+kmerSize-1;i++)
+        mask[i]=max(mask[i], flag);
 }
 
 long Indexer::makeKmer(string & seq, int pos) {

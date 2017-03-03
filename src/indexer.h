@@ -17,6 +17,9 @@
 using namespace std;
 
 const int KMER = 16;
+const unsigned char GC_TOP = 0x7F;
+const unsigned char GC_SECOND = 0x7F - 1;
+const unsigned char GC_NONE = 0; 
 
 #pragma pack(2) 
 // if contig is -1, means this is a dupe entry, and position will be the position in the dupList
@@ -45,6 +48,9 @@ public:
     map<long, int> mapRead(Read* r);
 
     static bool test();
+
+private:
+    void makeMask(unsigned char* mask, unsigned char flag, int seqlen, int start, int kmerSize);
 
 public:
     map<long, GenePos> mKmerPos;
