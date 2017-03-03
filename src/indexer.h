@@ -17,9 +17,10 @@
 using namespace std;
 
 const int KMER = 16;
-const unsigned char GC_TOP = 0x7F;
-const unsigned char GC_SECOND = 0x7F - 1;
-const unsigned char GC_NONE = 0; 
+const unsigned char MATCH_TOP = 0x7F;
+const unsigned char MATCH_SECOND = 0x7F - 1;
+const unsigned char MATCH_NONE = 1;
+const unsigned char MATCH_UNKNOWN = 0; 
 
 #pragma pack(2) 
 // if contig is -1, means this is a dupe entry, and position will be the position in the dupList
@@ -28,6 +29,12 @@ struct GenePos{
     int position;
 };
 #pragma pack() 
+
+struct SeqMatch{
+    int seqStart;
+    int seqEnd;
+    GenePos startGP;
+};
 
 class Indexer{
 public:
@@ -48,6 +55,7 @@ public:
     map<long, int> mapRead(Read* r);
 
     static bool test();
+
 
 private:
     void makeMask(unsigned char* mask, unsigned char flag, int seqlen, int start, int kmerSize);

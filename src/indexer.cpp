@@ -128,7 +128,8 @@ map<long, int> Indexer::mapRead(Read* r) {
     }
 
     unsigned char* mask = new unsigned char[seqlen];
-    memset(mask, 0, sizeof(unsigned char)*seqlen);
+    memset(mask, MATCH_UNKNOWN, sizeof(unsigned char)*seqlen);
+
     // second pass, make the mask
     for(int i=0; i< seqlen - KMER; i += step) {
         long kmer = makeKmer(seq, i);
@@ -140,16 +141,20 @@ map<long, int> Indexer::mapRead(Read* r) {
             for(int g=0; g<mDupeList[gp.position].size();g++) {
                 long gplong = gp2long(shift(mDupeList[gp.position][g], i));
                 if(abs(gplong - gp1) <= 1)
-                    makeMask(mask, GC_TOP, seqlen, i, KMER);
+                    makeMask(mask, MATCH_TOP, seqlen, i, KMER);
                 else if(abs(gplong - gp2) <= 1)
-                    makeMask(mask, GC_SECOND, seqlen, i, KMER);
+                    makeMask(mask, MATCH_SECOND, seqlen, i, KMER);
+                else if(gplong == 0)
+                    makeMask(mask, MATCH_NONE, seqlen, i, KMER);
             }
         } else {
             long gplong = gp2long(shift(gp, i));
             if(abs(gplong - gp1) <= 1)
-                    makeMask(mask, GC_TOP, seqlen, i, KMER);
+                    makeMask(mask, MATCH_TOP, seqlen, i, KMER);
             else if(abs(gplong - gp2) <= 1)
-                makeMask(mask, GC_SECOND, seqlen, i, KMER);
+                makeMask(mask, MATCH_SECOND, seqlen, i, KMER);
+            else if(gplong == 0)
+                makeMask(mask, MATCH_NONE, seqlen, i, KMER);
         }
     }
 
