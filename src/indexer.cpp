@@ -219,6 +219,8 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
                     }
                     g++;
                 }
+                // left shift to remove the mismatched end
+                end--;
                 if(end - start > maxEnd - maxStart){
                     maxEnd = end;
                     maxStart = start;
