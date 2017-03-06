@@ -17,8 +17,8 @@
 using namespace std;
 
 const int KMER = 16;
-const unsigned char MATCH_TOP = 0x7F;
-const unsigned char MATCH_SECOND = 0x7F - 1;
+const unsigned char MATCH_TOP = 3;
+const unsigned char MATCH_SECOND = 2;
 const unsigned char MATCH_NONE = 1;
 const unsigned char MATCH_UNKNOWN = 0; 
 
@@ -34,6 +34,10 @@ struct SeqMatch{
     int seqStart;
     int seqEnd;
     GenePos startGP;
+    inline void print() {
+        cout << seqStart << "-" << seqEnd << "|";
+        cout << startGP.contig << ":" << startGP.position;
+    }
 };
 
 class Indexer{
@@ -52,13 +56,14 @@ public:
     // map the read onto the reference
     // return a map, with key is the first-base-mapped GenePos encoded in long, value is the count of this GenePos
     // GenePos encoded with 0 means not mapped
-    map<long, int> mapRead(Read* r);
+    vector<SeqMatch> mapRead(Read* r);
 
     static bool test();
 
 
 private:
     void makeMask(unsigned char* mask, unsigned char flag, int seqlen, int start, int kmerSize);
+    vector<SeqMatch> segmentMask(unsigned char* mask, int seqlen, GenePos gp1, GenePos gp2);
 
 public:
     map<long, GenePos> mKmerPos;

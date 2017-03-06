@@ -74,9 +74,9 @@ void Indexer::indexContig(int ctg, string seq) {
     }
 }
 
-map<long, int> Indexer::mapRead(Read* r) {
-    map<long, int> ret;
-    ret[0]=0;
+vector<SeqMatch> Indexer::mapRead(Read* r) {
+    map<long, int> kmerStat;
+    kmerStat[0]=0;
     string seq = r->mSeq.mStr;
     const int step = 1;
     int seqlen = seq.length();
@@ -86,24 +86,26 @@ map<long, int> Indexer::mapRead(Read* r) {
         if(kmer < 0)
             continue;
         // no match
-        if(mKmerPos.count(kmer) <=0 )
-            ret[0]++;
+        if(mKmerPos.count(kmer) <=0 ){
+            kmerStat[0]++;
+            continue;
+        }
         GenePos gp = mKmerPos[kmer];
         // is a dupe
         if(gp.contig < 0) {
             for(int g=0; g<mDupeList[gp.position].size();g++) {
                 long gplong = gp2long(shift(mDupeList[gp.position][g], i));
-                if(ret.count(gplong)==0)
-                    ret[gplong] = 1;
+                if(kmerStat.count(gplong)==0)
+                    kmerStat[gplong] = 1;
                 else
-                    ret[gplong] += 1;
+                    kmerStat[gplong] += 1;
             }
         } else {
             long gplong = gp2long(shift(gp, i));
-            if(ret.count(gplong)==0)
-                ret[gplong] = 1;
+            if(kmerStat.count(gplong)==0)
+                kmerStat[gplong] = 1;
             else
-                ret[gplong] += 1;
+                kmerStat[gplong] += 1;
         }
     }
     // get 1st and 2nd hit
@@ -112,7 +114,7 @@ map<long, int> Indexer::mapRead(Read* r) {
     long gp2 = 0;
     int count2 = 0;
     map<long, int>::iterator iter;
-    for(iter = ret.begin(); iter!=ret.end(); iter++){
+    for(iter = kmerStat.begin(); iter!=kmerStat.end(); iter++){
         if(iter->first != 0 && iter->second > count1){
             gp2 = gp1;
             count2 = count1;
@@ -124,7 +126,8 @@ map<long, int> Indexer::mapRead(Read* r) {
         }  
     }
     if(count1 < 20){
-        // return null;
+        // return an null list
+        return vector<SeqMatch>();
     }
 
     unsigned char* mask = new unsigned char[seqlen];
@@ -133,7 +136,7 @@ map<long, int> Indexer::mapRead(Read* r) {
     // second pass, make the mask
     for(int i=0; i< seqlen - KMER; i += step) {
         long kmer = makeKmer(seq, i);
-        if(kmer < 0 || mKmerPos.count(kmer))
+        if(kmer < 0 || mKmerPos.count(kmer) <=0)
             continue;
         GenePos gp = mKmerPos[kmer];
         // is a dupe
@@ -159,12 +162,81 @@ map<long, int> Indexer::mapRead(Read* r) {
     }
 
 
-    return ret;
+    vector<SeqMatch> result = segmentMask(mask, seqlen, long2gp(gp1), long2gp(gp2));
+    delete mask;
+
+    return result;
 }
 
 void Indexer::makeMask(unsigned char* mask, unsigned char flag, int seqlen, int start, int kmerSize) {
     for(int i=start;i<seqlen && i<start+kmerSize-1;i++)
         mask[i]=max(mask[i], flag);
+}
+
+vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos gp1, GenePos gp2) {
+    vector<SeqMatch> result;
+
+    const int ALLOWED_GAP = 10;
+    const int THRESHOLD_LEN = 30;
+
+    int targets[2] = {MATCH_TOP, MATCH_SECOND};
+    GenePos gps[2] = {gp1, gp2};
+
+    for(int i=0;i<seqlen;i++)
+        cout<<(int)mask[i];
+    cout << endl;
+
+    for(int t=0; t<2; t++){
+        int maxStart = -1;
+        int maxEnd = -1;
+
+        // get gp1
+        int target = targets[t];
+        int start = 0;
+        int end = 0;
+        while(true){
+            // get next start
+            while(mask[start] != target && start != seqlen-1)
+                start++;
+
+            // reach the tail
+            if(start >= seqlen-1)
+                break;
+
+            if(mask[start] == target){
+                end = start+1;
+                // get the end
+                int g=0;
+                while(g<ALLOWED_GAP && end+g<seqlen){
+                    if(mask[end+g] > target)
+                        break;
+                    if(end+g < seqlen && mask[end+g] == target ){
+                        end += g+1;
+                        g = 0;
+                        continue;
+                    }
+                    g++;
+                }
+                if(end - start > maxEnd - maxStart){
+                    maxEnd = end;
+                    maxStart = start;
+                }
+                start++;
+            } else {
+                // not found
+                break;
+            }
+        }
+        if(maxEnd - maxStart >  THRESHOLD_LEN){
+            SeqMatch match;
+            match.seqStart = maxStart;
+            match.seqEnd = maxEnd;
+            match.startGP = gps[t];
+            result.push_back(match);
+        }
+    }
+
+    return result;
 }
 
 long Indexer::makeKmer(string & seq, int pos) {
