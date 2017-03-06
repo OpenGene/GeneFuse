@@ -81,7 +81,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
     const int step = 1;
     int seqlen = seq.length();
     // first pass, we only want to find if this seq can be partially aligned to the target
-    for(int i=0; i< seqlen - KMER; i += step) {
+    for(int i=0; i< seqlen - KMER + 1; i += step) {
         long kmer = makeKmer(seq, i);
         if(kmer < 0)
             continue;
@@ -134,7 +134,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
     memset(mask, MATCH_UNKNOWN, sizeof(unsigned char)*seqlen);
 
     // second pass, make the mask
-    for(int i=0; i< seqlen - KMER; i += step) {
+    for(int i=0; i< seqlen - KMER + 1; i += step) {
         long kmer = makeKmer(seq, i);
         if(kmer < 0 || mKmerPos.count(kmer) <=0)
             continue;
@@ -169,7 +169,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
 }
 
 void Indexer::makeMask(unsigned char* mask, unsigned char flag, int seqlen, int start, int kmerSize) {
-    for(int i=start;i<seqlen && i<start+kmerSize-1;i++)
+    for(int i=start;i<seqlen && i<start+kmerSize;i++)
         mask[i]=max(mask[i], flag);
 }
 
@@ -182,6 +182,8 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
     int targets[2] = {MATCH_TOP, MATCH_SECOND};
     GenePos gps[2] = {gp1, gp2};
 
+    cout<<"gp1,"<<gp1.contig<<":"<<gp1.position<<endl;
+    cout<<"gp2,"<<gp2.contig<<":"<<gp2.position<<endl;
     for(int i=0;i<seqlen;i++)
         cout<<(int)mask[i];
     cout << endl;
