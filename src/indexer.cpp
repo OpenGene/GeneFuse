@@ -125,7 +125,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
             count2 = iter->second;
         }  
     }
-    if(count1 < 20){
+    if(count1 < 10){
         // return an null list
         return vector<SeqMatch>();
     }
@@ -177,12 +177,12 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
     vector<SeqMatch> result;
 
     const int ALLOWED_GAP = 10;
-    const int THRESHOLD_LEN = 30;
+    const int THRESHOLD_LEN = 20;
 
     int targets[2] = {MATCH_TOP, MATCH_SECOND};
     GenePos gps[2] = {gp1, gp2};
 
-    cout<<"gp1,"<<gp1.contig<<":"<<gp1.position<<endl;
+    cout<<"gp1,"<<gp1.contig<<":"<<gp1.position<<", ";
     cout<<"gp2,"<<gp2.contig<<":"<<gp2.position<<endl;
     for(int i=0;i<seqlen;i++)
         cout<<(int)mask[i];

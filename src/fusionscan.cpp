@@ -18,12 +18,10 @@ FusionScan::FusionScan(string fusionFile, string refFile, string read1File, stri
 bool FusionScan::scan(){
     vector<Fusion> fusions = Fusion::parseCsv(mFusionFile);
     if(mRead2File != ""){
-        cout << "pescanner" << endl;
         PairEndScanner pescanner( mFusionFile, mRefFile, mRead1File, mRead2File, mHtmlFile, mThreadNum);
         return pescanner.scan();
     }
     else{
-        cout << "sescanner" << endl;
         SingleEndScanner sescanner( mFusionFile, mRefFile, mRead1File, mHtmlFile, mThreadNum);
         return sescanner.scan();
     }
