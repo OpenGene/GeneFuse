@@ -1,7 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define FUSIONSCAN_VER "0.0.1"
+#define FUSIONSCAN_VER "0.1.0"
 
 typedef long int64;
 typedef unsigned long uint64;

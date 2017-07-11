@@ -28,6 +28,8 @@ void FusionMapper::init(){
 
 Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
     vector<SeqMatch> mapping = mIndexer->mapRead(r);
+    if(mapping.size() == 0)
+        return NULL;
     cout<<r->mSeq.mStr<<endl;
     cout << mapping.size() << " mappings " << endl;
     vector<SeqMatch>::iterator iter;
