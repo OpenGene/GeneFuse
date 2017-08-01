@@ -45,7 +45,7 @@ public:
     Indexer(string refFile, vector<Fusion>& fusions);
     ~Indexer();
     void makeIndex();
-    void indexContig(int ctg, string seq);
+    void indexContig(int ctg, string seq, int start);
     void printStat();
 
     static inline long makeKmer(string & seq, int pos);

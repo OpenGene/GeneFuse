@@ -36,11 +36,15 @@ void Indexer::makeIndex() {
         string s = ref[chr].substr(gene.mStart, gene.mEnd - gene.mStart);
         str2upper(s);
         mFusionSeq.push_back(s);
-        indexContig(ctg, s);
+        //index forward
+        indexContig(ctg, s, 0);
+        //index reverse complement
+        Sequence seq = ~(Sequence(s));
+        indexContig(ctg, seq.mStr, -s.length()+1);
     }
 }
 
-void Indexer::indexContig(int ctg, string seq) {
+void Indexer::indexContig(int ctg, string seq, int start) {
     for(int i=0; i<seq.length() - KMER; ++i) {
         long kmer = makeKmer(seq, i);
         //cout << kmer << "\t" << seq.substr(i, KMER) << endl;
@@ -48,7 +52,7 @@ void Indexer::indexContig(int ctg, string seq) {
             continue;
         GenePos site;
         site.contig = ctg;
-        site.position = i;
+        site.position = i+start;
         // this is a dupe
         if(mKmerPos.count(kmer) >0 ){
             GenePos gp = mKmerPos[kmer];
