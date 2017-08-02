@@ -42,6 +42,7 @@ void Indexer::makeIndex() {
         Sequence seq = ~(Sequence(s));
         indexContig(ctg, seq.mStr, -s.length()+1);
     }
+    cerr << "Done indexing..."<<endl;
 }
 
 void Indexer::indexContig(int ctg, string seq, int start) {
@@ -118,6 +119,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
     long gp2 = 0;
     int count2 = 0;
     map<long, int>::iterator iter;
+    //TODO: handle small difference caused by INDEL
     for(iter = kmerStat.begin(); iter!=kmerStat.end(); iter++){
         if(iter->first != 0 && iter->second > count1){
             gp2 = gp1;
@@ -129,7 +131,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
             count2 = iter->second;
         }  
     }
-    if(count1 < 10){
+    if(count1 < 40 || count2 < 20){
         // return an null list
         return vector<SeqMatch>();
     }
@@ -165,6 +167,16 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
         }
     }
 
+    int mismatches = 0;
+    for(int i=0; i<seqlen; i++){
+        if(mask[i] == MATCH_NONE || mask[i] == MATCH_UNKNOWN )
+            mismatches++;
+    }
+
+    if(mismatches>10){
+        // too many mismatch indicates not a real fusion
+        return vector<SeqMatch>();
+    }
 
     vector<SeqMatch> result = segmentMask(mask, seqlen, long2gp(gp1), long2gp(gp2));
     delete mask;
@@ -185,12 +197,6 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
 
     int targets[2] = {MATCH_TOP, MATCH_SECOND};
     GenePos gps[2] = {gp1, gp2};
-
-    cout<<"gp1,"<<gp1.contig<<":"<<gp1.position<<", ";
-    cout<<"gp2,"<<gp2.contig<<":"<<gp2.position<<endl;
-    for(int i=0;i<seqlen;i++)
-        cout<<(int)mask[i];
-    cout << endl;
 
     for(int t=0; t<2; t++){
         int maxStart = -1;
@@ -242,6 +248,14 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
             match.startGP = gps[t];
             result.push_back(match);
         }
+    }
+
+    if(result.size()>=2){
+        cout<<"gp1,"<<gp1.contig<<":"<<gp1.position<<", ";
+        cout<<"gp2,"<<gp2.contig<<":"<<gp2.position<<endl;
+        for(int i=0;i<seqlen;i++)
+            cout<<(int)mask[i];
+        cout << endl;
     }
 
     return result;
