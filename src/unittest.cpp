@@ -15,11 +15,16 @@ UnitTest::UnitTest(){
 
 void UnitTest::run(){
     bool passed = true;
-    passed &= editdistance_test();
-    passed &= Sequence::test();
-    passed &= Overlap::test();
-    passed &= Fusion::test();
-    passed &= Indexer::test();
+    passed &= report(editdistance_test(), "editdistance_test");
+    passed &= report(Sequence::test(), "Sequence::test");
+    passed &= report(Overlap::test(), "Overlap::test");
+    passed &= report(Fusion::test(), "Fusion::test");
+    passed &= report(Indexer::test(), "Indexer::test");
     printf("\n==========================\n");
-    printf("%s\n\n", passed?"PASSED":"FAILED");
+    printf("%s\n\n", passed?"ALL PASSED":"FAILED");
+}
+
+bool UnitTest::report(bool result, string message) {
+    printf("%s:%s\n\n", message.c_str(), result?" PASSED":" FAILED");
+    return result;
 }

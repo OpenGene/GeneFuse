@@ -77,5 +77,5 @@ bool Fusion::test() {
     for(int i=0;i<fusions.size();++i) {
         //fusions[i].print();
     }
-    return fusions.size() == 3;
+    return fusions.size() == 4;
 }

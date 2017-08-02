@@ -275,12 +275,13 @@ long Indexer::makeKmer(string & seq, int pos) {
 
 long Indexer::gp2long(const GenePos& gp){
     long ret = gp.contig;
-    return (ret<<32) + gp.position;
+    int temp[2]={gp.position, 0};
+    return (ret<<32) | *((long*)temp);
 }
 
 GenePos Indexer::long2gp(const long val){
     GenePos gp;
-    gp.position = (val & 0xFFFFFFFF);
+    gp.position = (val & 0x00000000FFFFFFFF);
     gp.contig = val >> 32;
     return gp;
 }
@@ -298,13 +299,18 @@ void Indexer::printStat() {
 }
 
 bool Indexer::test() {
-    GenePos gp;
-    gp.contig = 5;
-    gp.position = 35792;
-    long val = gp2long(gp);
-    GenePos gp2 = long2gp(val);
-    long val2 = gp2long(gp2);
-    cout << val << "," << val2 <<endl;
-    cout << gp2.contig << ", " << gp2.position << endl;
-    return val == val2;
+    short contigs[10]={0, 1, 3, 220, -1, 0, 23, 4440, 110, 10};
+    int positions[10]={0, 111, 222, -333, 444, 555555, 6, -7777777, 8888, -9999};
+    for(int i=0;i<10;i++){
+        GenePos gp;
+        gp.contig = contigs[i];
+        gp.position = positions[i];
+        long val = gp2long(gp);
+        GenePos gp2 = long2gp(val);
+        long val2 = gp2long(gp2);
+        cout << gp2.contig << ", " << gp2.position << endl;
+        if ((gp.contig == gp2.contig && gp.position == gp2.position && val==val2) == false)
+            return false;
+    }
+    return true;
 }
