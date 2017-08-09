@@ -28,8 +28,16 @@ void FusionMapper::init(){
 
 Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
     vector<SeqMatch> mapping = mIndexer->mapRead(r);
-    if(mapping.size() <= 1)
+    
+    //we only focus on the reads that can be mapped to two genome positions
+    if(mapping.size() < 2)
         return NULL;
+
+    //if the left part of mapping result is reverse, use its reverse complement alternative and skip this one
+    if(!mIndexer->leftIsForward(mapping)) {
+        return NULL;
+    }
+
     cout<<r->mName<<endl;
     cout<<r->mSeq.mStr<<endl;
     cout << mapping.size() << " mappings " << endl;

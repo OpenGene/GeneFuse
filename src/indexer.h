@@ -11,23 +11,16 @@
 #include "fusion.h"
 #include <map>
 #include <vector>
-#include <cctype>  
+#include <cctype>
+#include "common.h"
 
 
 using namespace std;
-
-const int KMER = 16;
 const unsigned char MATCH_TOP = 3;
 const unsigned char MATCH_SECOND = 2;
 const unsigned char MATCH_NONE = 1;
 const unsigned char MATCH_UNKNOWN = 0; 
 
-#pragma pack(2) 
-// if contig is -1, means this is a dupe entry, and position will be the position in the dupList
-struct GenePos{
-    short contig;
-    int position;
-};
 #pragma pack() 
 
 struct SeqMatch{
@@ -57,6 +50,8 @@ public:
     // return a map, with key is the first-base-mapped GenePos encoded in long, value is the count of this GenePos
     // GenePos encoded with 0 means not mapped
     vector<SeqMatch> mapRead(Read* r);
+    // check a fusion of two mapping mates is: forward at left
+    bool leftIsForward(vector<SeqMatch>& mapping);
 
     static bool test();
 

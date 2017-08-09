@@ -15,9 +15,13 @@ typedef unsigned short uint16;
 typedef char int8;
 typedef unsigned char uint8;
 
+
 #pragma pack(2) 
-
-
+// if contig is -1, means this is a dupe entry, and position will be the position in the dupList
+struct GenePos{
+    short contig;
+    int position;
+};
 #pragma pack() 
 
 // the limit of the queue to store the packs

@@ -1,6 +1,8 @@
 #include "indexer.h"
 #include "util.h"
 
+const int KMER = 16;
+
 Indexer::Indexer(string refFile, vector<Fusion>& fusions) {
     mRefFile = refFile;
     mFusions = fusions;
@@ -250,7 +252,7 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
         }
     }
 
-    if(result.size()>=2){
+    if(result.size()>=2 && leftIsForward(result)){
         cout<<"gp1,"<<gp1.contig<<":"<<gp1.position<<", ";
         cout<<"gp2,"<<gp2.contig<<":"<<gp2.position<<endl;
         for(int i=0;i<seqlen;i++)
@@ -259,6 +261,15 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
     }
 
     return result;
+}
+
+bool Indexer::leftIsForward(vector<SeqMatch>& mapping) {
+    if(mapping.size()<2)
+        return false;
+    if(mapping[0].seqStart < mapping[1].seqStart)
+        return mapping[0].startGP.position >= 0;
+    else
+        return mapping[1].startGP.position >= 0;
 }
 
 long Indexer::makeKmer(string & seq, int pos) {
