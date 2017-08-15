@@ -17,6 +17,10 @@ Indexer::~Indexer() {
     mReference = NULL;
 }
 
+FastaReader* Indexer::getRef() {
+    return mReference;
+}
+
 void Indexer::makeIndex() {
     if(mReference == NULL)
         return ;

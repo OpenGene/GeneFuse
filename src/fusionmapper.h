@@ -20,6 +20,9 @@ public:
     ~FusionMapper();
 
     Match* mapRead(Read* r, int distanceReq = 2, int qualReq=20);
+    FastaReader* getRef();
+
+    void removeAlignables(vector<Match*> *fusionMatches, int size);
 
 private:
     void init();

@@ -54,6 +54,8 @@ bool PairEndScanner::scan(){
         threads[t] = NULL;
     }
 
+    mFusionMapper->removeAlignables(fusionMatches, fusionList.size());
+
     // sort the matches to make the pileup more clear
     for(int i=0;i<fusionList.size();i++){
         sort(fusionMatches[i].begin(), fusionMatches[i].end(), Match::greater); 

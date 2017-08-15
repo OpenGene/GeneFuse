@@ -30,6 +30,7 @@ public:
     void setReversed(bool flag);
     void addOriginalRead(Read* r);
     void addOriginalPair(ReadPair* pair);
+    Read* getRead() {return mRead;}
 
     inline bool operator <(const Match& other) const 
     {

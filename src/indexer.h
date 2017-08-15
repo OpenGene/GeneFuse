@@ -40,6 +40,7 @@ public:
     void makeIndex();
     void indexContig(int ctg, string seq, int start);
     void printStat();
+    FastaReader* getRef();
 
     static inline long makeKmer(string & seq, int pos);
     static inline long gp2long(const GenePos& gp);
