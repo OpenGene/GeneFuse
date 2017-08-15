@@ -83,7 +83,8 @@ void FusionMapper::removeAlignables(vector<Match*> *fusionMatches, int size) {
         for(int m=fusionMatches[i].size()-1 ;m>=0; m--) {
             MatchResult* mr = matcher.match(fusionMatches[i][m]->getRead()->mSeq);
             if(mr != NULL) {
-                fusionMatches[i].erase(fusionMatches[i].begin() + i);
+                delete fusionMatches[i][m];
+                fusionMatches[i].erase(fusionMatches[i].begin() + m);
                 removed++;
             }
         }
