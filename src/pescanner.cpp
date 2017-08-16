@@ -58,9 +58,9 @@ bool PairEndScanner::scan(){
     return true;
 }
 
-void PairEndScanner::pushMatch(int i, Match* m){
+void PairEndScanner::pushMatch(Match* m){
     std::unique_lock<std::mutex> lock(mFusionMtx);
-    mFusionMapper->fusionMatches[i].push_back(m);
+    mFusionMapper->addMatch(m);
     lock.unlock();
 }
 
@@ -84,12 +84,12 @@ bool PairEndScanner::scanPairEnd(ReadPairPack* pack){
             Match* matchMerged = mFusionMapper->mapRead(merged);
             if(matchMerged){
                 matchMerged->addOriginalPair(pair);
-                pushMatch(0, matchMerged);
+                pushMatch(matchMerged);
             }
             Match* matchMergedRC = mFusionMapper->mapRead(mergedRC);
             if(matchMergedRC){
                 matchMergedRC->addOriginalPair(pair);
-                pushMatch(0, matchMergedRC);
+                pushMatch(matchMergedRC);
             }
             continue;
         }
@@ -97,24 +97,24 @@ bool PairEndScanner::scanPairEnd(ReadPairPack* pack){
         Match* matchR1 = mFusionMapper->mapRead(r1);
         if(matchR1){
             matchR1->addOriginalPair(pair);
-            pushMatch(0, matchR1);
+            pushMatch(matchR1);
         }
         Match* matchR2 = mFusionMapper->mapRead(r2);
         if(matchR2){
             matchR2->addOriginalPair(pair);
-            pushMatch(0, matchR2);
+            pushMatch(matchR2);
         }
         Match* matchRcr1 = mFusionMapper->mapRead(rcr1);
         if(matchRcr1){
             matchRcr1->addOriginalPair(pair);
             matchRcr1->setReversed(true);
-            pushMatch(0, matchRcr1);
+            pushMatch(matchRcr1);
         }
         Match* matchRcr2 = mFusionMapper->mapRead(rcr2);
         if(matchRcr2){
             matchRcr2->addOriginalPair(pair);
             matchRcr2->setReversed(true);
-            pushMatch(0, matchRcr2);
+            pushMatch(matchRcr2);
         }
         delete pair;
         if(merged!=NULL){

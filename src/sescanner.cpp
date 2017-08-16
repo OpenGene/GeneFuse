@@ -58,9 +58,9 @@ bool SingleEndScanner::scan(){
     return true;
 }
 
-void SingleEndScanner::pushMatch(int i, Match* m){
+void SingleEndScanner::pushMatch(Match* m){
     std::unique_lock<std::mutex> lock(mFusionMtx);
-    mFusionMapper->fusionMatches[i].push_back(m);
+    mFusionMapper->addMatch(m);
     lock.unlock();
 }
 
@@ -71,13 +71,13 @@ bool SingleEndScanner::scanSingleEnd(ReadPack* pack){
         Match* matchR1 = mFusionMapper->mapRead(r1);
         if(matchR1){
             matchR1->addOriginalRead(r1);
-            pushMatch(0, matchR1);
+            pushMatch(matchR1);
         }
         Match* matchRcr1 = mFusionMapper->mapRead(rcr1);
         if(matchRcr1){
             matchRcr1->addOriginalRead(r1);
             matchRcr1->setReversed(true);
-            pushMatch(0, matchRcr1);
+            pushMatch(matchRcr1);
         }
         delete r1;
         delete rcr1;

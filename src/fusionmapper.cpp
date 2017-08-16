@@ -8,12 +8,6 @@
 #include "globalsettings.h"
 #include "matcher.h"
 
-FusionMapper::FusionMapper(string refFile, vector<Fusion>& fusions){
-	mRefFile = refFile;
-    fusionList = fusions;
-    init();
-}
-
 FusionMapper::FusionMapper(string refFile, string fusionFile){
     mRefFile = refFile;
     fusionList = Fusion::parseCsv(fusionFile);
@@ -25,6 +19,10 @@ FusionMapper::~FusionMapper(){
         delete mIndexer;
         mIndexer = NULL;
     }
+    if(fusionMatches!=NULL) {
+        //delete fusionMatches;
+        //fusionMatches = NULL;
+    }
 }
 
 
@@ -32,8 +30,10 @@ void FusionMapper::init(){
     mIndexer = new Indexer(mRefFile, fusionList);
     mIndexer->makeIndex();
 
-    fusionMatches = new vector<Match*>[fusionList.size()];
-    for(int i=0;i<fusionList.size();i++){
+    mFusionMatchSize = fusionList.size() * fusionList.size();
+
+    fusionMatches = new vector<Match*>[mFusionMatchSize];
+    for(int i=0;i<mFusionMatchSize;i++){
         fusionMatches[i] = vector<Match*>();
     }
 }
@@ -85,12 +85,19 @@ Match* FusionMapper::makeMatch(Read* r, vector<SeqMatch>& mapping) {
     GenePos leftGP = left.startGP;
     GenePos rightGP = right.startGP;
     leftGP.position += readBreak;
-    rightGP.position += readBreak;
-    return new Match(r, readBreak, leftGP, rightGP);
+    rightGP.position += readBreak+1;
+    int gap = right.seqStart - left.seqEnd - 1;
+    return new Match(r, readBreak, leftGP, rightGP, gap);
+}
+    
+void FusionMapper::addMatch(Match* m) {
+    int leftContig = m->mLeftGP.contig;
+    int rightContig = m->mRightGP.contig;
+    int index = fusionList.size() * rightContig + leftContig;
+    fusionMatches[index].push_back(m);
 }
 
 void FusionMapper::removeAlignables() {
-    int size = fusionList.size();
     FastaReader* ref = getRef();
     if(ref == NULL)
         return ;
@@ -98,7 +105,7 @@ void FusionMapper::removeAlignables() {
     vector<Sequence> seqs;
 
     // first pass to gather all sequences
-    for(int i=0; i<size; i++) {
+    for(int i=0; i<mFusionMatchSize; i++) {
         for(int m=0; m< fusionMatches[i].size(); m++) {
             seqs.push_back(fusionMatches[i][m]->getRead()->mSeq);
         }
@@ -108,7 +115,7 @@ void FusionMapper::removeAlignables() {
 
     int removed = 0;
     // second pass to remove alignable sequences
-    for(int i=0; i<size; i++) {
+    for(int i=0; i<mFusionMatchSize; i++) {
         for(int m=fusionMatches[i].size()-1 ;m>=0; m--) {
             MatchResult* mr = matcher.match(fusionMatches[i][m]->getRead()->mSeq);
             if(mr != NULL) {
@@ -128,14 +135,17 @@ void FusionMapper::removeAlignables() {
 
 void FusionMapper::sortMatches() {
     // sort the matches to make the pileup more clear
-    for(int i=0;i<fusionList.size();i++){
+    for(int i=0;i<mFusionMatchSize;i++){
         sort(fusionMatches[i].begin(), fusionMatches[i].end(), Match::greater); 
     }
 }
 
 void FusionMapper::freeMatches() {
     // free it
-    for(int i=0;i<fusionList.size();i++){
+    for(int i=0;i<mFusionMatchSize;i++){
         fusionMatches[i].clear();
     }
+}
+
+void FusionMapper::clusterMatches() {
 }

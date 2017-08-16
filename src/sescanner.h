@@ -52,7 +52,7 @@ private:
     void consumePack();
     void producerTask();
     void consumerTask();
-    void pushMatch(int i, Match* m);
+    void pushMatch(Match* m);
 
 private:
     string mFusionFile;

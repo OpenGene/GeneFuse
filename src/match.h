@@ -15,15 +15,15 @@
 using namespace std;
 
 /*
-*                          refBreak
-*  ref: ---------------------- ++++++++++++++++++++++++++++++
-* read:           ------------ ------------
-*                         readBreak
+*                          
+*  ref:                 leftGP       rightGP
+* read:           ------------       ------------
+*                    readBreak       readBreak+1
 */
 
 class Match{
 public:
-    Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int distance = 0, bool reversed = false);
+    Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int gap, int distance = 0, bool reversed = false);
     ~Match();
     void print(int leftlen, int centerlen, int rightlen);
     void printHtmlTD(ofstream& file, int leftlen, int centerlen, int rightlen);
@@ -52,10 +52,12 @@ public:
 
     static int countUnique(vector<Match*>& matches);
 
-private:
+public:
     Read* mRead;
     vector<Read*> mOriginalReads;
     int mDistance;
+    // the gap between left and right segment after segmentation
+    int mGap;
     bool mReversed;
     int mReadBreak;
     GenePos mLeftGP;

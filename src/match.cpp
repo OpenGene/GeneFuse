@@ -1,9 +1,10 @@
 #include "match.h"
 #include <vector>
 
-Match::Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int distance, bool reversed){
+Match::Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int gap, int distance, bool reversed){
     mRead = new Read(*r);
     mDistance = distance;
+    mGap = gap;
     mReadBreak = readBreak;
     mLeftGP = leftGP;
     mRightGP = rightGP;

@@ -16,7 +16,6 @@ using namespace std;
 
 class FusionMapper{
 public:
-    FusionMapper(string refFile, vector<Fusion>& fusions);
     FusionMapper(string refFile, string fusionFile);
     ~FusionMapper();
 
@@ -26,6 +25,8 @@ public:
     void removeAlignables();
     void sortMatches();
     void freeMatches();
+    void clusterMatches();
+    void addMatch(Match* m);
 
 private:
     void init();
@@ -33,6 +34,7 @@ private:
 
 public:
     string mRefFile;
+    int mFusionMatchSize;
     Indexer* mIndexer;
     vector<Fusion> fusionList;
     vector<Match*> *fusionMatches;
