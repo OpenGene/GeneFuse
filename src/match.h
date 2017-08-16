@@ -22,7 +22,7 @@ using namespace std;
 
 class Match{
 public:
-    Match(Read* r, int readBreak, int refBreak, int distance, bool reversed = false);
+    Match(Read* r, int readBreak, int leftPos, int rightPos, int distance = 0, bool reversed = false);
     ~Match();
     void print(int leftlen, int centerlen, int rightlen);
     void printHtmlTD(ofstream& file, int leftlen, int centerlen, int rightlen);
@@ -57,7 +57,8 @@ private:
     int mDistance;
     bool mReversed;
     int mReadBreak;
-    int mRefBreak;
+    int mLeftPos;
+    int mRightPos;
 };
 
 

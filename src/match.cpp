@@ -1,11 +1,12 @@
 #include "match.h"
 #include <vector>
 
-Match::Match(Read* r, int readBreak, int refBreak, int distance, bool reversed){
+Match::Match(Read* r, int readBreak, int leftPos, int rightPos, int distance, bool reversed){
     mRead = new Read(*r);
     mDistance = distance;
     mReadBreak = readBreak;
-    mReadBreak = refBreak;
+    mLeftPos = leftPos;
+    mRightPos = rightPos;
     mReversed = reversed;
 }
 
