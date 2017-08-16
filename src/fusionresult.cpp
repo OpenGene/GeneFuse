@@ -34,3 +34,40 @@ bool FusionResult::supportSame(Match* m1, Match* m2) {
 
     return true;
 }
+
+void FusionResult::calcFusionPoint() {
+    if(mMatches.size() == 0)
+        return ;
+
+    // if we can find an exact match with 0 gap, then use it
+    // else we use the mean one
+    long leftTotal = 0;
+    long rightTotal = 0;
+    for(int i=0; i<mMatches.size(); i++) {
+        Match* match = mMatches[i];
+        if(match->mGap == 0){
+            mLeftGP = match->mLeftGP;
+            mRightGP = match->mRightGP;
+            return ;
+        }
+        leftTotal += match->mLeftGP.position;
+        rightTotal += match->mRightGP.position;
+    }
+
+    mLeftGP.contig = mMatches[0]->mLeftGP.contig;
+    mLeftGP.position = leftTotal/mMatches.size();
+    mRightGP.contig = mMatches[0]->mRightGP.contig;
+    mRightGP.position = rightTotal/mMatches.size();
+
+}
+
+void FusionResult::print() {
+    cout << endl << "--------FUSION ";
+    cout << mLeftGP.contig << ":" << mLeftGP.position << "_";
+    cout << mRightGP.contig << ":" << mRightGP.position << " ";
+    cout << mMatches.size() << " reads" << endl; 
+    for(int i=0; i<mMatches.size(); i++) {
+        cout << i << ",";
+        mMatches[i]->print();
+    }
+}

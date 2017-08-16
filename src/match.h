@@ -25,7 +25,7 @@ class Match{
 public:
     Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int gap, int distance = 0, bool reversed = false);
     ~Match();
-    void print(int leftlen, int centerlen, int rightlen);
+    void print();
     void printHtmlTD(ofstream& file, int leftlen, int centerlen, int rightlen);
     void printReadsToFile(ofstream& file);
     void setReversed(bool flag);

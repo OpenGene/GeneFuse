@@ -28,18 +28,15 @@ void Match::addOriginalPair(ReadPair* pair){
     mOriginalReads.push_back(new Read(*pair->mRight));
 }
 
-void Match::print(int leftlen, int centerlen, int rightlen){
-    cout<<"pos: "<<mReadBreak<<", distance: "<<mDistance;
+void Match::print(){
+    cout<<"pos: "<<mReadBreak;
     if(mReversed)
         cout<<", reverse";
     else
         cout<<", forward";
     cout<<endl;
     vector<int> breaks;
-    breaks.push_back(max(mReadBreak-leftlen, 0));
     breaks.push_back( mReadBreak );
-    breaks.push_back( mReadBreak+centerlen );
-    breaks.push_back( min(mReadBreak+centerlen+rightlen, mRead->length()));
     mRead->printWithBreaks(breaks);
 }
 

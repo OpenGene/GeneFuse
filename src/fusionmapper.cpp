@@ -57,6 +57,7 @@ Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
         return NULL;
     }
 
+    /* print for debugging
     cout<<r->mName<<endl;
     cout<<r->mSeq.mStr<<endl;
     cout << mapping.size() << " mappings " << endl;
@@ -65,7 +66,7 @@ Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
         iter->print();
         cout << endl;
     }
-    cout << endl;
+    cout << endl;*/
 
     // TODO: set int readBreak, int leftContig, int leftPos, int rightContig, int rightPos
     Match* m = makeMatch(r, mapping);
@@ -119,9 +120,9 @@ void FusionMapper::removeAlignables() {
         for(int m=fusionMatches[i].size()-1 ;m>=0; m--) {
             MatchResult* mr = matcher.match(fusionMatches[i][m]->getRead()->mSeq);
             if(mr != NULL) {
-                fusionMatches[i][m]->getRead()->mSeq.print();
-                cout<<endl;
-                mr->print();
+                //fusionMatches[i][m]->getRead()->mSeq.print();
+                //cout<<endl;
+                //mr->print();
                 delete fusionMatches[i][m];
                 fusionMatches[i].erase(fusionMatches[i].begin() + m);
                 removed++;
@@ -129,8 +130,8 @@ void FusionMapper::removeAlignables() {
         }
     }
 
-    cout << "sequence number before removeAlignables: " << seqs.size() << endl;
-    cout << "removed: "<< removed << endl;
+    cerr << "sequence number before removeAlignables: " << seqs.size() << endl;
+    cerr << "removed: "<< removed << endl;
 }
 
 void FusionMapper::sortMatches() {
@@ -153,19 +154,26 @@ void FusionMapper::clusterMatches() {
     for(int i=0;i<mFusionMatchSize;i++){
         vector<FusionResult> frs;
         for(int m=0 ;m<fusionMatches[i].size(); m++){
+            bool found = false;
+            Match* match = fusionMatches[i][m];
             for(int f=0; f<frs.size(); f++) {
-                Match* match = fusionMatches[i][m];
-                if(frs[f].support(match))
+                if(frs[f].support(match)){
                     frs[f].addMatch(match);
-                else {
-                    FusionResult fr;
-                    fr.addMatch(match);
-                    frs.push_back(fr);
+                    found = true;
+                    break;
                 }
+            }
+            if(!found) {
+                FusionResult fr;
+                fr.addMatch(match);
+                frs.push_back(fr);
             }
         }
         for(int f=0; f<frs.size(); f++) {
+            frs[f].calcFusionPoint();
+            frs[f].print();
             mFusionResults.push_back(frs[f]);
         }
     }
+    cerr<<"mFusionResults size: " << mFusionResults.size() << endl;
 }

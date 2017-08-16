@@ -17,6 +17,8 @@ public:
     FusionResult();
     ~FusionResult();
 
+    void print();
+    void calcFusionPoint();
     void addMatch(Match* m);
     bool support(Match* m);
     static bool supportSame(Match* m1, Match* m2);

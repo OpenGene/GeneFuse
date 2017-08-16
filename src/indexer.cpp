@@ -256,13 +256,14 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
         }
     }
 
+    /* output for debug
     if(result.size()>=2 && leftIsForward(result)){
         cout<<"gp1,"<<gp1.contig<<":"<<gp1.position<<", ";
         cout<<"gp2,"<<gp2.contig<<":"<<gp2.position<<endl;
         for(int i=0;i<seqlen;i++)
             cout<<(int)mask[i];
         cout << endl;
-    }
+    }*/
 
     return result;
 }
