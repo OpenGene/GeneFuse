@@ -10,6 +10,7 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include "common.h"
 
 using namespace std;
 
@@ -22,7 +23,7 @@ using namespace std;
 
 class Match{
 public:
-    Match(Read* r, int readBreak, int leftPos, int rightPos, int distance = 0, bool reversed = false);
+    Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int distance = 0, bool reversed = false);
     ~Match();
     void print(int leftlen, int centerlen, int rightlen);
     void printHtmlTD(ofstream& file, int leftlen, int centerlen, int rightlen);
@@ -57,8 +58,8 @@ private:
     int mDistance;
     bool mReversed;
     int mReadBreak;
-    int mLeftPos;
-    int mRightPos;
+    GenePos mLeftGP;
+    GenePos mRightGP;
 };
 
 

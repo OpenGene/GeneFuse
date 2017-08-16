@@ -56,9 +56,26 @@ Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
     }
     cout << endl;
 
-    // TODO: set readBreak, refBreak, distance
-    Match* m = new Match(r, 0, 0, 0);
+    // TODO: set int readBreak, int leftContig, int leftPos, int rightContig, int rightPos
+    Match* m = makeMatch(r, mapping);
     return m;
+}
+
+Match* FusionMapper::makeMatch(Read* r, vector<SeqMatch>& mapping) {
+    if(mapping.size()!=2)
+        return NULL;
+    SeqMatch left = mapping[0];
+    SeqMatch right = mapping[1];
+    if(left.seqStart > right.seqStart) {
+        left = mapping[1];
+        right = mapping[0];
+    }
+    int readBreak = (left.seqEnd + right.seqStart)/2;
+    GenePos leftGP = left.startGP;
+    GenePos rightGP = right.startGP;
+    leftGP.position += readBreak;
+    rightGP.position += readBreak;
+    return new Match(r, readBreak, leftGP, rightGP);
 }
 
 void FusionMapper::removeAlignables(vector<Match*> *fusionMatches, int size) {

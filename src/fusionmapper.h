@@ -26,6 +26,7 @@ public:
 
 private:
     void init();
+    Match* makeMatch(Read* r, vector<SeqMatch>& mapping);
 
 public:
     string mRefFile;
