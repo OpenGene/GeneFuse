@@ -143,9 +143,29 @@ void FusionMapper::sortMatches() {
 void FusionMapper::freeMatches() {
     // free it
     for(int i=0;i<mFusionMatchSize;i++){
+        for(int m=fusionMatches[i].size()-1 ;m>=0; m--)
+            delete fusionMatches[i][m];
         fusionMatches[i].clear();
     }
 }
 
 void FusionMapper::clusterMatches() {
+    for(int i=0;i<mFusionMatchSize;i++){
+        vector<FusionResult> frs;
+        for(int m=0 ;m<fusionMatches[i].size(); m++){
+            for(int f=0; f<frs.size(); f++) {
+                Match* match = fusionMatches[i][m];
+                if(frs[f].support(match))
+                    frs[f].addMatch(match);
+                else {
+                    FusionResult fr;
+                    fr.addMatch(match);
+                    frs.push_back(fr);
+                }
+            }
+        }
+        for(int f=0; f<frs.size(); f++) {
+            mFusionResults.push_back(frs[f]);
+        }
+    }
 }

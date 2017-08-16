@@ -50,6 +50,7 @@ bool PairEndScanner::scan(){
 
     mFusionMapper->removeAlignables();
     mFusionMapper->sortMatches();
+    mFusionMapper->clusterMatches();
 
     textReport(mFusionMapper->fusionList, mFusionMapper->fusionMatches);
     htmlReport(mFusionMapper->fusionList, mFusionMapper->fusionMatches);

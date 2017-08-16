@@ -10,6 +10,7 @@
 #include <fstream>
 #include "indexer.h"
 #include "match.h"
+#include "fusionresult.h"
 
 
 using namespace std;
@@ -38,6 +39,7 @@ public:
     Indexer* mIndexer;
     vector<Fusion> fusionList;
     vector<Match*> *fusionMatches;
+    vector<FusionResult> mFusionResults;
 };
 
 
