@@ -17,12 +17,15 @@ using namespace std;
 class FusionMapper{
 public:
     FusionMapper(string refFile, vector<Fusion>& fusions);
+    FusionMapper(string refFile, string fusionFile);
     ~FusionMapper();
 
     Match* mapRead(Read* r, int distanceReq = 2, int qualReq=20);
     FastaReader* getRef();
 
-    void removeAlignables(vector<Match*> *fusionMatches, int size);
+    void removeAlignables();
+    void sortMatches();
+    void freeMatches();
 
 private:
     void init();
@@ -31,7 +34,8 @@ private:
 public:
     string mRefFile;
     Indexer* mIndexer;
-    vector<Fusion> mFusions;
+    vector<Fusion> fusionList;
+    vector<Match*> *fusionMatches;
 };
 
 

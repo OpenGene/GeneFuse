@@ -62,8 +62,6 @@ private:
     string mHtmlFile;
     ReadRepository mRepo;
     bool mProduceFinished;
-    vector<Fusion> fusionList;
-    vector<Match*> *fusionMatches;
     std::mutex mFusionMtx;
     int mThreadNum;
     FusionMapper* mFusionMapper;

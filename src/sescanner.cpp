@@ -27,13 +27,7 @@ SingleEndScanner::~SingleEndScanner() {
 
 bool SingleEndScanner::scan(){
 
-    fusionList = Fusion::parseCsv(mFusionFile);
-    mFusionMapper = new FusionMapper(mRefFile, fusionList);
-
-    fusionMatches = new vector<Match*>[fusionList.size()];
-    for(int i=0;i<fusionList.size();i++){
-        fusionMatches[i] = vector<Match*>();
-    }
+    mFusionMapper = new FusionMapper(mRefFile, mFusionFile);
 
     initPackRepository();
     std::thread producer(std::bind(&SingleEndScanner::producerTask, this));
@@ -53,26 +47,20 @@ bool SingleEndScanner::scan(){
         threads[t] = NULL;
     }
 
-    mFusionMapper->removeAlignables(fusionMatches, fusionList.size());
+    mFusionMapper->removeAlignables();
+    mFusionMapper->sortMatches();
 
-    // sort the matches to make the pileup more clear
-    for(int i=0;i<fusionList.size();i++){
-        sort(fusionMatches[i].begin(), fusionMatches[i].end(), Match::greater); 
-    }
+    textReport(mFusionMapper->fusionList, mFusionMapper->fusionMatches);
+    htmlReport(mFusionMapper->fusionList, mFusionMapper->fusionMatches);
 
-    textReport(fusionList, fusionMatches);
-    htmlReport(fusionList, fusionMatches);
+    mFusionMapper->freeMatches();
 
-    // free memory
-    for(int i=0;i<fusionList.size();i++){
-        fusionMatches[i].clear();
-    }
     return true;
 }
 
 void SingleEndScanner::pushMatch(int i, Match* m){
     std::unique_lock<std::mutex> lock(mFusionMtx);
-    fusionMatches[i].push_back(m);
+    mFusionMapper->fusionMatches[i].push_back(m);
     lock.unlock();
 }
 
@@ -227,26 +215,12 @@ void SingleEndScanner::consumerTask()
 }
 
 void SingleEndScanner::textReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches) {
-    /*
-    //output result
-    for(int i=0;i<fusionList.size();i++){
-        vector<Match*> matches = fusionMatches[i];
-        if(matches.size()>0){
-            cout<<endl<<"---------------"<<endl;
-            fusionList[i].print();
-            for(int m=0; m<matches.size(); m++){
-                cout<<m+1<<", ";
-                matches[m]->print(fusionList[i].mLeft.length(), fusionList[i].mCenter.length(), fusionList[i].mRight.length());
-            }
-        }
-    }
-    */
 }
 
 void SingleEndScanner::htmlReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches) {
     if(mHtmlFile == "")
         return;
 
-    HtmlReporter reporter(mHtmlFile, fusionList, fusionMatches);
+    HtmlReporter reporter(mHtmlFile, mFusionMapper->fusionList, fusionMatches);
     reporter.run();
 }

@@ -10,7 +10,13 @@
 
 FusionMapper::FusionMapper(string refFile, vector<Fusion>& fusions){
 	mRefFile = refFile;
-    mFusions = fusions;
+    fusionList = fusions;
+    init();
+}
+
+FusionMapper::FusionMapper(string refFile, string fusionFile){
+    mRefFile = refFile;
+    fusionList = Fusion::parseCsv(fusionFile);
     init();
 }
 
@@ -23,8 +29,13 @@ FusionMapper::~FusionMapper(){
 
 
 void FusionMapper::init(){
-    mIndexer = new Indexer(mRefFile, mFusions);
+    mIndexer = new Indexer(mRefFile, fusionList);
     mIndexer->makeIndex();
+
+    fusionMatches = new vector<Match*>[fusionList.size()];
+    for(int i=0;i<fusionList.size();i++){
+        fusionMatches[i] = vector<Match*>();
+    }
 }
 
 FastaReader* FusionMapper::getRef() {
@@ -78,7 +89,8 @@ Match* FusionMapper::makeMatch(Read* r, vector<SeqMatch>& mapping) {
     return new Match(r, readBreak, leftGP, rightGP);
 }
 
-void FusionMapper::removeAlignables(vector<Match*> *fusionMatches, int size) {
+void FusionMapper::removeAlignables() {
+    int size = fusionList.size();
     FastaReader* ref = getRef();
     if(ref == NULL)
         return ;
@@ -112,4 +124,18 @@ void FusionMapper::removeAlignables(vector<Match*> *fusionMatches, int size) {
 
     cout << "sequence number before removeAlignables: " << seqs.size() << endl;
     cout << "removed: "<< removed << endl;
+}
+
+void FusionMapper::sortMatches() {
+    // sort the matches to make the pileup more clear
+    for(int i=0;i<fusionList.size();i++){
+        sort(fusionMatches[i].begin(), fusionMatches[i].end(), Match::greater); 
+    }
+}
+
+void FusionMapper::freeMatches() {
+    // free it
+    for(int i=0;i<fusionList.size();i++){
+        fusionMatches[i].clear();
+    }
 }

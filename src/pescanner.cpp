@@ -28,13 +28,7 @@ PairEndScanner::~PairEndScanner() {
 
 bool PairEndScanner::scan(){
 
-    fusionList = Fusion::parseCsv(mFusionFile);
-    mFusionMapper = new FusionMapper(mRefFile, fusionList);
-
-    fusionMatches = new vector<Match*>[fusionList.size()];
-    for(int i=0;i<fusionList.size();i++){
-        fusionMatches[i] = vector<Match*>();
-    }
+    mFusionMapper = new FusionMapper(mRefFile, mFusionFile);
 
     initPackRepository();
     std::thread producer(std::bind(&PairEndScanner::producerTask, this));
@@ -54,26 +48,19 @@ bool PairEndScanner::scan(){
         threads[t] = NULL;
     }
 
-    mFusionMapper->removeAlignables(fusionMatches, fusionList.size());
+    mFusionMapper->removeAlignables();
+    mFusionMapper->sortMatches();
 
-    // sort the matches to make the pileup more clear
-    for(int i=0;i<fusionList.size();i++){
-        sort(fusionMatches[i].begin(), fusionMatches[i].end(), Match::greater); 
-    }
+    textReport(mFusionMapper->fusionList, mFusionMapper->fusionMatches);
+    htmlReport(mFusionMapper->fusionList, mFusionMapper->fusionMatches);
 
-    textReport(fusionList, fusionMatches);
-    htmlReport(fusionList, fusionMatches);
-
-    // free memory
-    for(int i=0;i<fusionList.size();i++){
-        fusionMatches[i].clear();
-    }
+    mFusionMapper->freeMatches();
     return true;
 }
 
 void PairEndScanner::pushMatch(int i, Match* m){
     std::unique_lock<std::mutex> lock(mFusionMtx);
-    fusionMatches[i].push_back(m);
+    mFusionMapper->fusionMatches[i].push_back(m);
     lock.unlock();
 }
 
@@ -271,20 +258,6 @@ void PairEndScanner::consumerTask()
 }
 
 void PairEndScanner::textReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches) {
-    /*
-    //output result
-    for(int i=0;i<fusionList.size();i++){
-        vector<Match*> matches = fusionMatches[i];
-        if(matches.size()>0){
-            cout<<endl<<"---------------"<<endl;
-            fusionList[i].print();
-            for(int m=0; m<matches.size(); m++){
-                cout<<m+1<<", ";
-                matches[m]->print(fusionList[i].mLeft.length(), fusionList[i].mCenter.length(), fusionList[i].mRight.length());
-            }
-        }
-    }
-    */
 }
 
 void PairEndScanner::htmlReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches) {
