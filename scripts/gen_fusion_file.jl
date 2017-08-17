@@ -58,7 +58,7 @@ function detect(ref, genes, fusion)
             exons = g.transcripts[1].exons
             id = 1
             for e in exons
-                write(output, string(id), ",", string(e.start_pos), "-", string(e.end_pos), "\n")
+                write(output, string(id), ",", string(e.start_pos), ",", string(e.end_pos), "\n")
                 id += 1
             end
             write(output, "\n")
