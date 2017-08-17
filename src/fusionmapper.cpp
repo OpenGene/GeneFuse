@@ -57,7 +57,7 @@ Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
         return NULL;
     }
 
-    cout<<r->mName<<endl;
+    /*cout<<r->mName<<endl;
     cout<<r->mSeq.mStr<<endl;
     cout << mapping.size() << " mappings " << endl;
     vector<SeqMatch>::iterator iter;
@@ -65,7 +65,7 @@ Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
         iter->print();
         cout << endl;
     }
-    cout << endl;
+    cout << endl;*/
 
     // TODO: set int readBreak, int leftContig, int leftPos, int rightContig, int rightPos
     Match* m = makeMatch(r, mapping);

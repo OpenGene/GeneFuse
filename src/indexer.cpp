@@ -48,7 +48,6 @@ void Indexer::makeIndex() {
         Sequence seq = ~(Sequence(s));
         indexContig(ctg, seq.mStr, -s.length()+1);
     }
-    cerr << "Done indexing..."<<endl;
 }
 
 void Indexer::indexContig(int ctg, string seq, int start) {
@@ -256,13 +255,13 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
         }
     }
 
-    if(result.size()>=2 && inRequiredDirection(result)){
+    /*if(result.size()>=2 && inRequiredDirection(result)){
         cout<<"gp1,"<<gp1.contig<<":"<<gp1.position<<", ";
         cout<<"gp2,"<<gp2.contig<<":"<<gp2.position<<endl;
         for(int i=0;i<seqlen;i++)
             cout<<(int)mask[i];
         cout << endl;
-    }
+    }*/
 
     return result;
 }

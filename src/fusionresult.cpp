@@ -48,6 +48,8 @@ void FusionResult::calcFusionPoint() {
         if(match->mGap == 0){
             mLeftGP = match->mLeftGP;
             mRightGP = match->mRightGP;
+
+            adjustFusionBreak();
             return ;
         }
         leftTotal += match->mLeftGP.position;
@@ -59,6 +61,20 @@ void FusionResult::calcFusionPoint() {
     mRightGP.contig = mMatches[0]->mRightGP.contig;
     mRightGP.position = rightTotal/mMatches.size();
 
+    adjustFusionBreak();
+
+}
+
+void FusionResult::adjustFusionBreak() {
+    for(int i=0; i<mMatches.size(); i++) {
+        int shift = mLeftGP.position - mMatches[i]->mLeftGP.position;
+        mMatches[i]->mReadBreak += shift;
+        mMatches[i]->mLeftGP.position += shift;
+        mMatches[i]->mRightGP.position += shift;
+        /*if(shift != 0) {
+            cout << "after shift:" << mMatches[i]->mRightGP.position << ", mRightGP.position:" << mRightGP.position << endl;
+        }*/
+    }
 }
 
 void FusionResult::print() {
