@@ -12,6 +12,7 @@ Gene::Gene(string name, string chr, int start, int end){
     mChr = chr;
     mStart = start;
     mEnd = end;
+    mReversed = false;
 }
 
 Gene::Gene(const Gene& other) {
@@ -20,6 +21,7 @@ Gene::Gene(const Gene& other) {
     mStart = other.mStart;
     mEnd = other.mEnd;
     mExons = other.mExons;
+    mReversed = other.mReversed;
 }
 
 Gene::Gene() {
@@ -27,6 +29,7 @@ Gene::Gene() {
     mChr = "invalid";
     mStart = 0;
     mEnd = 0;
+    mReversed = false;
 }
 
 bool Gene::valid() {
@@ -35,6 +38,11 @@ bool Gene::valid() {
 
 void Gene::addExon(Exon exon) {
     mExons.push_back(exon);
+    if(mExons.size()>1) {
+        if(mExons[0].start > mExons[1].start) {
+            mReversed = true;
+        }
+    }
 }
 
 void Gene::addExon(int id, int start, int end) {
@@ -42,11 +50,12 @@ void Gene::addExon(int id, int start, int end) {
     exon.id=id;
     exon.start=start;
     exon.end=end;
-    mExons.push_back(exon);
+    addExon(exon);
 }
 
 void Gene::print() {
-    cout<<mName<<","<<mChr<<":"<<mStart<<"-"<<mEnd<<endl;
+    cout<<mName<<","<<mChr<<":"<<mStart<<"-"<<mEnd;
+    cout<<(mReversed?" reversed":" forward")<<endl;
     for(int i=0;i<mExons.size();++i){
         cout<<mExons[i].id<<","<<mExons[i].start<<","<<mExons[i].end<<endl;
     }

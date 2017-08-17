@@ -53,11 +53,10 @@ Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
         return NULL;
 
     //if the left part of mapping result is reverse, use its reverse complement alternative and skip this one
-    if(!mIndexer->leftIsForward(mapping)) {
+    if(!mIndexer->inRequiredDirection(mapping)) {
         return NULL;
     }
 
-    /* print for debugging
     cout<<r->mName<<endl;
     cout<<r->mSeq.mStr<<endl;
     cout << mapping.size() << " mappings " << endl;
@@ -66,7 +65,7 @@ Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
         iter->print();
         cout << endl;
     }
-    cout << endl;*/
+    cout << endl;
 
     // TODO: set int readBreak, int leftContig, int leftPos, int rightContig, int rightPos
     Match* m = makeMatch(r, mapping);

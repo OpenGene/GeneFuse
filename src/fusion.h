@@ -23,6 +23,7 @@ public:
     void print();
     void printHtml(ofstream& file);
     static bool test();
+    bool isReversed() {return mGene.isReversed();}
 
 public:
     Gene mGene;

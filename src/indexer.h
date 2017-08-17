@@ -52,7 +52,7 @@ public:
     // GenePos encoded with 0 means not mapped
     vector<SeqMatch> mapRead(Read* r);
     // check a fusion of two mapping mates is: forward at left
-    bool leftIsForward(vector<SeqMatch>& mapping);
+    bool inRequiredDirection(vector<SeqMatch>& mapping);
 
     static bool test();
 

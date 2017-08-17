@@ -25,6 +25,7 @@ public:
     // WAR to make a default constructor
     Gene();
     bool valid();
+    bool isReversed() { return mReversed; }
     void addExon(Exon exon);
     void addExon(int id, int start, int end);
     void print();
@@ -36,6 +37,7 @@ public:
     int mStart;
     int mEnd;
     vector<Exon> mExons;
+    bool mReversed;
 };
 
 #endif

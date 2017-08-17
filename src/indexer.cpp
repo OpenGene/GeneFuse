@@ -256,25 +256,36 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
         }
     }
 
-    /* output for debug
-    if(result.size()>=2 && leftIsForward(result)){
+    if(result.size()>=2 && inRequiredDirection(result)){
         cout<<"gp1,"<<gp1.contig<<":"<<gp1.position<<", ";
         cout<<"gp2,"<<gp2.contig<<":"<<gp2.position<<endl;
         for(int i=0;i<seqlen;i++)
             cout<<(int)mask[i];
         cout << endl;
-    }*/
+    }
 
     return result;
 }
 
-bool Indexer::leftIsForward(vector<SeqMatch>& mapping) {
+bool Indexer::inRequiredDirection(vector<SeqMatch>& mapping) {
     if(mapping.size()<2)
         return false;
-    if(mapping[0].seqStart < mapping[1].seqStart)
-        return mapping[0].startGP.position >= 0;
-    else
-        return mapping[1].startGP.position >= 0;
+
+    SeqMatch left = mapping[0];
+    SeqMatch right = mapping[1];
+    if(left.seqStart > right.seqStart) {
+        left = mapping[1];
+        right = mapping[0];
+    }
+
+    if( mFusions[left.startGP.contig].isReversed() && !mFusions[right.startGP.contig].isReversed()){
+        // if left is reversed and right is not reversed
+        // we should swap their position by using their reverse complement
+        return false;
+    } else {
+        // we keep the left is forward
+        return left.startGP.position >0;
+    }
 }
 
 long Indexer::makeKmer(string & seq, int pos) {
