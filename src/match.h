@@ -16,9 +16,9 @@ using namespace std;
 
 /*
 *                          
-*  ref:                 leftGP       rightGP
-* read:           ------------       ------------
-*                    readBreak       readBreak+1
+*  ref:           0...      leftGP       rightGP     ...
+* read:           ----------------       -------------------------
+*                 0...   readBreak       readBreak+1 ... readlen-1
 */
 
 class Match{

@@ -36,7 +36,8 @@ void Match::print(){
         cout<<", forward";
     cout<<endl;
     vector<int> breaks;
-    breaks.push_back( mReadBreak );
+    // we use mReadBreak+1 since it means the length of (0...mReadBreak)
+    breaks.push_back( mReadBreak+1 );
     mRead->printWithBreaks(breaks);
 }
 
