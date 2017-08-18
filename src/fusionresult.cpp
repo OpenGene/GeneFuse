@@ -57,9 +57,9 @@ void FusionResult::calcFusionPoint() {
     }
 
     mLeftGP.contig = mMatches[0]->mLeftGP.contig;
-    mLeftGP.position = leftTotal/mMatches.size();
+    mLeftGP.position = leftTotal/(long)mMatches.size();
     mRightGP.contig = mMatches[0]->mRightGP.contig;
-    mRightGP.position = rightTotal/mMatches.size();
+    mRightGP.position = rightTotal/(long)mMatches.size();
 
     adjustFusionBreak();
 

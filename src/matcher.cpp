@@ -19,6 +19,8 @@ Matcher::~Matcher() {
 }
 
 void Matcher::initBloomFilter(vector<Sequence>& seqs) {
+    if(mBloomFilterArray == NULL)
+        delete mBloomFilterArray;
     mBloomFilterArray = new unsigned char[BLOOM_FILTER_LENGTH];
     memset(mBloomFilterArray, 0, BLOOM_FILTER_LENGTH);
     for(int s=0;s<seqs.size();s++) {
@@ -62,6 +64,7 @@ void Matcher::makeIndex() {
         //indexContig(ctg, rseq.mStr, -s.length()+1);
         ctg++;
     }
+    cerr<<"matcher indexing done"<<endl;
 }
 
 void Matcher::indexContig(int ctg, string seq, int start) {
