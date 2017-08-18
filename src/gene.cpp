@@ -85,3 +85,36 @@ Gene Gene::parse(string linestr) {
     return Gene(name, chr, start, end);
 
 }
+
+string Gene::pos2str(int pos) {
+    int pp = abs(pos) + mStart;
+    stringstream ss;
+    ss<<mName<<":";
+    for(int i=0; i<mExons.size(); i++) {
+        if(pp >= mExons[i].start && pp <= mExons[i].end) {
+            ss<<"exon:"<<mExons[i].id<<"|";
+            break;
+        }
+        if(i>0) {
+            if(mReversed) {
+                if(mExons[i].end < pp && pp < mExons[i-1].start){
+                    ss<<"intron:"<<(mExons[i].id-1)<<"|";
+                    break;
+                }
+            } else {
+                if(mExons[i-1].end < pp && pp < mExons[i].start){
+                    ss<<"intron:"<<(mExons[i].id-1)<<"|";
+                    break;
+                }
+            }
+        }
+    }
+    if(pos>=0)
+        ss<<"+";
+    else
+        ss<<"-";
+    ss<<mChr<<":";
+    ss<<pp;
+
+    return ss.str();
+}

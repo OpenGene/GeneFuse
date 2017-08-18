@@ -30,6 +30,7 @@ public:
     void addExon(int id, int start, int end);
     void print();
     static Gene parse(string linestr);
+    string pos2str(int pos);
 
 public:
     string mName;

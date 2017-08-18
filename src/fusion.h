@@ -24,6 +24,7 @@ public:
     void printHtml(ofstream& file);
     static bool test();
     bool isReversed() {return mGene.isReversed();}
+    string pos2str(int pos);
 
 public:
     Gene mGene;

@@ -72,10 +72,30 @@ void Fusion::print(){
 void Fusion::printHtml(ofstream& file){
 }
 
+string Fusion::pos2str(int pos) {
+    return mGene.pos2str(pos);
+}
+
 bool Fusion::test() {
     vector<Fusion> fusions = Fusion::parseCsv("testdata/fusions.csv");
     for(int i=0;i<fusions.size();++i) {
-        //fusions[i].print();
+        Fusion f = fusions[i];
+        if(f.mGene.mName == "ALK") {
+            // exon 20
+            if(f.pos2str(-30582)!="ALK:exon:20|-chr2:29446222")
+                return false;
+            // intron 19
+            if(f.pos2str(31060)!="ALK:intron:19|+chr2:29446700")
+                return false;
+        }
+        if(f.mGene.mName == "EML4") {
+            // exon 6
+            if(f.pos2str(95365)!="EML4:exon:6|+chr2:42491855")
+                return false;
+            // intron 5
+            if(f.pos2str(95346)!="EML4:intron:5|+chr2:42491836")
+                return false;
+        }
     }
     return fusions.size() == 4;
 }
