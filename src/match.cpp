@@ -34,11 +34,11 @@ void Match::print(){
         cout<<", read direction: reversed complement";
     else
         cout<<", read direction: original direction";
-    cout << ", name: " << mRead->mName.substr(1, mRead->mName.length());
+    cout << ", name: " << mRead->mName.substr(1, mRead->mName.length()-1);
     cout << endl;
     cout << mRead->mSeq.mStr.substr(0, mReadBreak+1);
     cout << " ";
-    cout << mRead->mSeq.mStr.substr(mReadBreak+1, mRead->length());
+    cout << mRead->mSeq.mStr.substr(mReadBreak+1, mRead->length() - (mReadBreak+1));
     cout << endl;
 }
 
