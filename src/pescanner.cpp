@@ -92,6 +92,10 @@ bool PairEndScanner::scanPairEnd(ReadPairPack* pack){
                 matchMergedRC->addOriginalPair(pair);
                 pushMatch(matchMergedRC);
             }
+
+            delete pair;
+            delete merged;
+            delete mergedRC;
             continue;
         }
         // else still search R1 and R2 separatedly
@@ -118,13 +122,8 @@ bool PairEndScanner::scanPairEnd(ReadPairPack* pack){
             pushMatch(matchRcr2);
         }
         delete pair;
-        if(merged!=NULL){
-            delete merged;
-            delete mergedRC;
-        } else {
-            delete rcr1;
-            delete rcr2;
-        }
+        delete rcr1;
+        delete rcr2;
     }
 
     delete pack->data;
