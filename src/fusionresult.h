@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include "match.h"
+#include "fusion.h"
 
 
 using namespace std;
@@ -17,7 +18,7 @@ public:
     FusionResult();
     ~FusionResult();
 
-    void print();
+    void print(vector<Fusion>& fusions);
     void calcFusionPoint();
     void adjustFusionBreak();
     void addMatch(Match* m);

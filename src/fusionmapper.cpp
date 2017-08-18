@@ -170,7 +170,7 @@ void FusionMapper::clusterMatches() {
         }
         for(int f=0; f<frs.size(); f++) {
             frs[f].calcFusionPoint();
-            frs[f].print();
+            frs[f].print(fusionList);
             mFusionResults.push_back(frs[f]);
         }
     }

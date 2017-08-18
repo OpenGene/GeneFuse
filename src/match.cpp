@@ -29,16 +29,17 @@ void Match::addOriginalPair(ReadPair* pair){
 }
 
 void Match::print(){
-    cout<<"pos: "<<mReadBreak;
+    cout<<"read break: "<<mReadBreak+1;
     if(mReversed)
-        cout<<", reverse";
+        cout<<", read direction: reversed complement";
     else
-        cout<<", forward";
-    cout<<endl;
-    vector<int> breaks;
-    // we use mReadBreak+1 since it means the length of (0...mReadBreak)
-    breaks.push_back( mReadBreak+1 );
-    mRead->printWithBreaks(breaks);
+        cout<<", read direction: original direction";
+    cout << ", name: " << mRead->mName.substr(1, mRead->mName.length());
+    cout << endl;
+    cout << mRead->mSeq.mStr.substr(0, mReadBreak+1);
+    cout << " ";
+    cout << mRead->mSeq.mStr.substr(mReadBreak+1, mRead->length());
+    cout << endl;
 }
 
 void Match::printHtmlTD(ofstream& file, int leftlen, int centerlen, int rightlen){

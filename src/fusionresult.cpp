@@ -77,13 +77,14 @@ void FusionResult::adjustFusionBreak() {
     }
 }
 
-void FusionResult::print() {
-    cout << endl << "--------FUSION ";
-    cout << mLeftGP.contig << ":" << mLeftGP.position << "_";
-    cout << mRightGP.contig << ":" << mRightGP.position << " ";
-    cout << mMatches.size() << " reads" << endl; 
+void FusionResult::print(vector<Fusion>& fusions) {
+    cout << endl << "#Fusion: ";
+    cout << fusions[mLeftGP.contig].pos2str(mLeftGP.position) << "_";
+    cout << fusions[mRightGP.contig].pos2str(mRightGP.position) ;
+    cout << " (total: " << mMatches.size() << " reads)";
+    cout << endl;
     for(int i=0; i<mMatches.size(); i++) {
-        cout << i << ",";
+        cout << ">" << i+1 << ", ";
         mMatches[i]->print();
     }
 }
