@@ -266,6 +266,7 @@ vector<SeqMatch> Indexer::segmentMask(unsigned char* mask, int seqlen, GenePos g
     return result;
 }
 
+// this function is to gurantee that all the supporting reads will have same direction
 bool Indexer::inRequiredDirection(vector<SeqMatch>& mapping) {
     if(mapping.size()<2)
         return false;
@@ -277,14 +278,35 @@ bool Indexer::inRequiredDirection(vector<SeqMatch>& mapping) {
         right = mapping[0];
     }
 
-    if( mFusions[left.startGP.contig].isReversed() && !mFusions[right.startGP.contig].isReversed()){
-        // if left is reversed and right is not reversed
-        // we should swap their position by using their reverse complement
+    // both are positive, good to go
+    if(left.startGP.position >0 && right.startGP.position >0)
+        return true;
+
+    // if both are negative, we should use their reverse complement, which will be both positive
+    if(left.startGP.position <0 && right.startGP.position <0)
         return false;
-    } else {
-        // we keep the left is forward
-        return left.startGP.position >0;
+    
+    // if one is positive, the other is negative, their reverse complement will be the same
+    if( mFusions[left.startGP.contig].isReversed() && !mFusions[right.startGP.contig].isReversed()){
+        // if left is reversed gene and right is forward gene
+        // we should use their reverse complement, which keep the left forward gene
+        return false;
+    } 
+    else if( !mFusions[left.startGP.contig].isReversed() && mFusions[right.startGP.contig].isReversed()){
+        // if left is forward gene and right is reversed gene, good to go
+        return true;
     }
+    else {
+        // otherwise, we should keep the left has smaller contig
+        if(left.startGP.contig < right.startGP.contig)
+            return true;
+        // or smaller positive if contig is the same
+        if(left.startGP.contig == right.startGP.contig && abs(left.startGP.position) < abs(left.startGP.position))
+            return true;
+        else
+            return false;
+    }
+    return false;
 }
 
 long Indexer::makeKmer(string & seq, int pos) {
