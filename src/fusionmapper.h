@@ -20,7 +20,7 @@ public:
     FusionMapper(string refFile, string fusionFile);
     ~FusionMapper();
 
-    Match* mapRead(Read* r, int distanceReq = 2, int qualReq=20);
+    Match* mapRead(Read* r, bool& mapable, int distanceReq = 2, int qualReq=20);
     FastaReader* getRef();
 
     void removeAlignables();

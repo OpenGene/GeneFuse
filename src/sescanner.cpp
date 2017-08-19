@@ -68,20 +68,22 @@ void SingleEndScanner::pushMatch(Match* m){
 bool SingleEndScanner::scanSingleEnd(ReadPack* pack){
     for(int p=0;p<pack->count;p++){
         Read* r1 = pack->data[p];
-        Read* rcr1 = r1->reverseComplement();
-        Match* matchR1 = mFusionMapper->mapRead(r1);
+        bool mapable = false;
+        Match* matchR1 = mFusionMapper->mapRead(r1, mapable);
         if(matchR1){
             matchR1->addOriginalRead(r1);
             pushMatch(matchR1);
-        }
-        Match* matchRcr1 = mFusionMapper->mapRead(rcr1);
-        if(matchRcr1){
-            matchRcr1->addOriginalRead(r1);
-            matchRcr1->setReversed(true);
-            pushMatch(matchRcr1);
+        } else if(mapable){
+            Read* rcr1 = r1->reverseComplement();
+            Match* matchRcr1 = mFusionMapper->mapRead(rcr1, mapable);
+            if(matchRcr1){
+                matchRcr1->addOriginalRead(r1);
+                matchRcr1->setReversed(true);
+                pushMatch(matchRcr1);
+            }
+            delete rcr1;
         }
         delete r1;
-        delete rcr1;
     }
 
     delete pack->data;

@@ -46,12 +46,16 @@ FastaReader* FusionMapper::getRef() {
         return mIndexer->getRef();
 }
 
-Match* FusionMapper::mapRead(Read* r, int distanceReq, int qualReq) {
+Match* FusionMapper::mapRead(Read* r, bool& mapable, int distanceReq, int qualReq) {
     vector<SeqMatch> mapping = mIndexer->mapRead(r);
     
     //we only focus on the reads that can be mapped to two genome positions
-    if(mapping.size() < 2)
+    if(mapping.size() < 2){
+        mapable = false;
         return NULL;
+    }
+
+    mapable = true;
 
     //if the left part of mapping result is reverse, use its reverse complement alternative and skip this one
     if(!mIndexer->inRequiredDirection(mapping)) {

@@ -74,56 +74,59 @@ bool PairEndScanner::scanPairEnd(ReadPairPack* pack){
         Read* rcr2 = NULL;
         Read* merged = pair->fastMerge();
         Read* mergedRC = NULL;
-        if(merged != NULL)
-            mergedRC = merged->reverseComplement();
-        else {
-            rcr1 = r1->reverseComplement();
-            rcr2 = r2->reverseComplement();
-        }
+        bool mapable = false;
         // if merged successfully, we only search the merged
         if(merged != NULL) {
-            Match* matchMerged = mFusionMapper->mapRead(merged);
+            Match* matchMerged = mFusionMapper->mapRead(merged, mapable);
             if(matchMerged){
                 matchMerged->addOriginalPair(pair);
                 pushMatch(matchMerged);
-            }
-            Match* matchMergedRC = mFusionMapper->mapRead(mergedRC);
-            if(matchMergedRC){
-                matchMergedRC->addOriginalPair(pair);
-                pushMatch(matchMergedRC);
+            } else if(mapable){
+                mergedRC = merged->reverseComplement();
+                Match* matchMergedRC = mFusionMapper->mapRead(mergedRC, mapable);
+                if(matchMergedRC){
+                    matchMergedRC->addOriginalPair(pair);
+                    pushMatch(matchMergedRC);
+                }
+                delete mergedRC;
             }
 
             delete pair;
             delete merged;
-            delete mergedRC;
             continue;
         }
         // else still search R1 and R2 separatedly
-        Match* matchR1 = mFusionMapper->mapRead(r1);
+        mapable = false;
+        Match* matchR1 = mFusionMapper->mapRead(r1, mapable);
         if(matchR1){
             matchR1->addOriginalPair(pair);
             pushMatch(matchR1);
+        } else if(mapable){
+            rcr1 = r1->reverseComplement();
+            Match* matchRcr1 = mFusionMapper->mapRead(rcr1, mapable);
+            if(matchRcr1){
+                matchRcr1->addOriginalPair(pair);
+                matchRcr1->setReversed(true);
+                pushMatch(matchRcr1);
+            }
+            delete rcr1;
         }
-        Match* matchR2 = mFusionMapper->mapRead(r2);
+        mapable = false;
+        Match* matchR2 = mFusionMapper->mapRead(r2, mapable);
         if(matchR2){
             matchR2->addOriginalPair(pair);
             pushMatch(matchR2);
-        }
-        Match* matchRcr1 = mFusionMapper->mapRead(rcr1);
-        if(matchRcr1){
-            matchRcr1->addOriginalPair(pair);
-            matchRcr1->setReversed(true);
-            pushMatch(matchRcr1);
-        }
-        Match* matchRcr2 = mFusionMapper->mapRead(rcr2);
-        if(matchRcr2){
-            matchRcr2->addOriginalPair(pair);
-            matchRcr2->setReversed(true);
-            pushMatch(matchRcr2);
+        } else if(mapable) {
+            rcr2 = r2->reverseComplement();
+            Match* matchRcr2 = mFusionMapper->mapRead(rcr2, mapable);
+            if(matchRcr2){
+                matchRcr2->addOriginalPair(pair);
+                matchRcr2->setReversed(true);
+                pushMatch(matchRcr2);
+            }
+            delete rcr2;
         }
         delete pair;
-        delete rcr1;
-        delete rcr2;
     }
 
     delete pack->data;
