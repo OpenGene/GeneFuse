@@ -7,6 +7,7 @@
 #include <vector>
 #include <sys/stat.h>
 #include <algorithm>
+#include <time.h>
 
 using namespace std;
 
@@ -171,6 +172,18 @@ inline void str2upper(string& s){
 
 inline void str2lower(string& s){
     transform(s.begin(), s.end(), s.begin(), (int (*)(int))tolower);  
+}
+
+inline void loginfo(const string s){
+    time_t tt = time(NULL);
+    tm* t= localtime(&tt);
+    cerr<<t->tm_hour<<":"<<t->tm_min<<":"<<t->tm_sec<<" "<<s<<endl;
+}
+
+inline string int2str(int num){
+    char str[20];
+    sprintf(str,"%d",num);
+    return string(str);
 }
 
 #endif /* UTIL_H */

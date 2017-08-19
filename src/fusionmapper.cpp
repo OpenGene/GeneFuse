@@ -7,6 +7,7 @@
 #include <sstream>
 #include "globalsettings.h"
 #include "matcher.h"
+#include <stdlib.h>
 
 FusionMapper::FusionMapper(string refFile, string fusionFile){
     mRefFile = refFile;
@@ -111,6 +112,8 @@ void FusionMapper::removeAlignables() {
         }
     }
 
+    loginfo( string("sequence number before removeAlignables: ") + string(int2str(seqs.size())));
+
     Matcher matcher(ref, seqs);
 
     int removed = 0;
@@ -128,9 +131,7 @@ void FusionMapper::removeAlignables() {
             }
         }
     }
-
-    cerr << "sequence number before removeAlignables: " << seqs.size() << endl;
-    cerr << "removed: "<< removed << endl;
+    loginfo( string("removed: ") + string( int2str(removed )));
 }
 
 void FusionMapper::sortMatches() {

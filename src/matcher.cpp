@@ -64,7 +64,7 @@ void Matcher::makeIndex() {
         //indexContig(ctg, rseq.mStr, -s.length()+1);
         ctg++;
     }
-    cerr<<"matcher indexing done"<<endl;
+    loginfo("matcher indexing done");
 }
 
 void Matcher::indexContig(int ctg, string seq, int start) {

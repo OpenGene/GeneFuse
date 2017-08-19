@@ -48,7 +48,7 @@ void Indexer::makeIndex() {
         Sequence seq = ~(Sequence(s));
         indexContig(ctg, seq.mStr, -s.length()+1);
     }
-    cerr<<"mapper indexing done"<<endl;
+    loginfo("mapper indexing done");
 }
 
 void Indexer::indexContig(int ctg, string seq, int start) {
