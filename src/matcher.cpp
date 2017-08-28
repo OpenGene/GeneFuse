@@ -1,5 +1,7 @@
 #include "matcher.h"
 #include "util.h"
+#include <memory.h>
+#include <stdlib.h>
 
 // we use 512M memory
 const int BLOOM_FILTER_LENGTH = (1<<29);
@@ -19,8 +21,6 @@ Matcher::~Matcher() {
 }
 
 void Matcher::initBloomFilter(vector<Sequence>& seqs) {
-    if(mBloomFilterArray == NULL)
-        delete mBloomFilterArray;
     mBloomFilterArray = new unsigned char[BLOOM_FILTER_LENGTH];
     memset(mBloomFilterArray, 0, BLOOM_FILTER_LENGTH);
     for(int s=0;s<seqs.size();s++) {
@@ -64,7 +64,7 @@ void Matcher::makeIndex() {
         //indexContig(ctg, rseq.mStr, -s.length()+1);
         ctg++;
     }
-    loginfo("matcher indexing done");
+    cerr << "Done indexing..."<<endl;
 }
 
 void Matcher::indexContig(int ctg, string seq, int start) {
@@ -129,36 +129,57 @@ MatchResult* Matcher::match(Sequence& sequence) {
 }
 
 MatchResult* Matcher::mapToIndex(Sequence& sequence) {
-    map<long, int> kmerStat;
+    hash_map<long, int> kmerStat;
     kmerStat[0]=0;
     string seq = sequence.mStr;
     const int step = 1;
+    const int skipThreshold = 50;
     int seqlen = seq.length();
+
+    unsigned int* allKmer = new unsigned int[seqlen];
+    memset(allKmer, 0, sizeof(unsigned int) * seqlen);
+    bool* kmerValid = new bool[seqlen];
+    memset(kmerValid, 0, sizeof(bool) * seqlen);
+    bool* skipped = new bool[seqlen];
+    memset(skipped, 0, sizeof(bool) * seqlen);
+
     // first pass, we only want to find if this seq can be partially aligned to the target
     bool valid = false;
+    int pos=0;
+    int stat=0;
     for(int i=0; i< seqlen - KMER + 1; i += step) {
         unsigned int kmer = makeKmer(seq, i, valid);
+        kmerValid[i] = valid;
         if(!valid)
             continue;
+
+        allKmer[i] = kmer;
         // no match
         if(mKmerPositions.count(kmer) <=0 ){
             kmerStat[0]++;
             continue;
         }
 
+        if(mKmerPositions[kmer].size() > skipThreshold) {
+            skipped[i] = true;
+            continue;
+        }
+
         for(int g=0; g<mKmerPositions[kmer].size();g++) {
             long gplong = gp2long(shift(mKmerPositions[kmer][g], i));
-            if(kmerStat.count(gplong)==0)
+            if(kmerStat.count(gplong)==0) {
                 kmerStat[gplong] = 1;
-            else
+            }
+            else {
                 kmerStat[gplong] += 1;
+            }
         }
     }
     // get top N
     const int TOP = 5;
     long topgp[TOP] ={0};
     int topcount[TOP] = {0};
-    map<long, int>::iterator iter;
+    hash_map<long, int>::iterator iter;
     for(iter = kmerStat.begin(); iter!=kmerStat.end(); iter++){
         long gp = iter->first;
         int count = iter->second;
@@ -180,18 +201,29 @@ MatchResult* Matcher::mapToIndex(Sequence& sequence) {
     }
 
     for(int t=0;t<TOP;t++){
+        if(topcount[t]==0)
+            break;
         unsigned char* mask = new unsigned char[seqlen];
         memset(mask, 0, sizeof(unsigned char)*seqlen);
 
         // make the mask
         bool valid = false;
         for(int i=0; i< seqlen - KMER + 1; i += step) {
-            long kmer = makeKmer(seq, i, valid);
+            valid = kmerValid[i];
+            unsigned int kmer = allKmer[i];
             if(!valid || mKmerPositions.count(kmer) <=0)
                 continue;
-            for(int g=0; g<mKmerPositions[kmer].size();g++) {
-                long gplong = gp2long(shift(mKmerPositions[kmer][g], i));
-                if(abs(gplong - topgp[t]) <= 2){
+            if(!skipped[i] && mKmerPositions[kmer].size()<5) {
+                for(int g=0; g<mKmerPositions[kmer].size();g++) {
+                    long gplong = gp2long(shift(mKmerPositions[kmer][g], i));
+                    if(abs(gplong - topgp[t]) <= 2){
+                        for(int m=i;m<seqlen && m<i+KMER;m++)
+                            mask[m]=1;
+                    }
+                }
+            } else {
+                // this is repetive kmer, better method using binary search 
+                if(isConsistent(topgp[t], kmer, i, 2)) {
                     for(int m=i;m<seqlen && m<i+KMER;m++)
                         mask[m]=1;
                 }
@@ -208,13 +240,54 @@ MatchResult* Matcher::mapToIndex(Sequence& sequence) {
             mr->startGP = long2gp(topgp[t]);
             mr->mismatches = mismatches;
             delete mask;
+            delete skipped;
+            delete allKmer;
+            delete kmerValid;
             return mr;
         }
         delete mask;
         mask = NULL;
     }
-
+    
+    delete skipped;
+    delete allKmer;
+    delete kmerValid;
     return NULL;
+}
+
+bool Matcher::isConsistent(long thisgp, unsigned int kmer, int seqpos, int threshold) {
+    vector<GenePos>& gps = mKmerPositions[kmer];
+    // align by seqpos
+    GenePos target = shift(long2gp(thisgp), -seqpos);
+    int size = gps.size();
+    int left = 0;
+    int right = size-1;
+    while(left <= right) {
+        int center = (left + right) /2;
+        GenePos centerPos = gps[center];
+
+        if(centerPos.contig < target.contig) {
+            // go right
+            left = center+1;
+        } else if(centerPos.contig > target.contig) {
+            // go left
+            right = center-1;
+        } else {
+
+            if(abs(centerPos.position - target.position) <= threshold)
+                return true;
+
+            if(centerPos.position < target.position) {
+                // go right
+                left = center+1;
+            } else if(centerPos.position > target.position) {
+                // go left
+                right = center-1;
+            }
+        }
+    }
+
+    return false;
 }
 
 void Matcher::makeMask(unsigned char* mask, unsigned char flag, int seqlen, int start, int kmerSize) {

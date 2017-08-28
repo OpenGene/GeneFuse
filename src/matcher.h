@@ -14,6 +14,12 @@
 #include <vector>
 #include <cctype>
 #include "common.h"
+#ifdef _WINDOWS
+    #include <hash_map>
+#else
+    #include <ext/hash_map>
+    #define hash_map __gnu_cxx::hash_map
+#endif
 
 using namespace std;
 
@@ -54,6 +60,7 @@ private:
     void makeMask(unsigned char* mask, unsigned char flag, int seqlen, int start, int kmerSize);
     void initBloomFilter(vector<Sequence>& seqs);
     void initBloomFilterWithSeq(Sequence& seq);
+    bool isConsistent(long thisgp, unsigned int kmer, int seqpos, int threshold);
 
 public:
     map<unsigned int, vector<GenePos>> mKmerPositions;
