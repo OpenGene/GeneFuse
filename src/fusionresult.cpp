@@ -64,6 +64,16 @@ void FusionResult::calcFusionPoint() {
     adjustFusionBreak();
 
 }
+    
+void FusionResult::calcUnique() {
+    mUnique = 1;
+    // since it is sorted, so just check every match with previous one
+    for(int i=1; i<mMatches.size(); i++) {
+        if(mMatches[i]->mReadBreak != mMatches[i-1]->mReadBreak ||
+            mMatches[i]->mRead->length() != mMatches[i-1]->mRead->length())
+            mUnique ++;
+    }
+}
 
 void FusionResult::adjustFusionBreak() {
     for(int i=0; i<mMatches.size(); i++) {
@@ -81,7 +91,7 @@ void FusionResult::print(vector<Fusion>& fusions) {
     cout << endl << "#Fusion: ";
     cout << fusions[mLeftGP.contig].pos2str(mLeftGP.position) << "_";
     cout << fusions[mRightGP.contig].pos2str(mRightGP.position) ;
-    cout << " (total: " << mMatches.size() << " reads)";
+    cout << " (total: " << mMatches.size() << ", unique:" << mUnique <<")";
     cout << endl;
     for(int i=0; i<mMatches.size(); i++) {
         cout << ">" << i+1 << ", ";

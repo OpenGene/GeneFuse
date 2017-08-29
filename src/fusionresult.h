@@ -20,6 +20,7 @@ public:
 
     void print(vector<Fusion>& fusions);
     void calcFusionPoint();
+    void calcUnique();
     void adjustFusionBreak();
     void addMatch(Match* m);
     bool support(Match* m);
@@ -29,6 +30,7 @@ public:
     GenePos mLeftGP;
     GenePos mRightGP;
     vector<Match*> mMatches;
+    int mUnique;
 };
 
 
