@@ -119,12 +119,13 @@ void FusionMapper::calcDistance(Match* match) {
 
 int FusionMapper::calcED(string seq, int contig, int start, int end) {
     // check start and end are in same strand
-    if(start * end <= 0)
+    if( (start>=0 && end<=0) || (start<=0 && end>=0) ) {
         return -1;
+    }
 
     string& fusionSeq = mIndexer->mFusionSeq[contig];
 
-    // echeck the overflow
+    // check the overflow
     if(abs(start)>=fusionSeq.length() || abs(end)>=fusionSeq.length())
         return -2;
 
@@ -152,11 +153,50 @@ void FusionMapper::addMatch(Match* m) {
 }
 
 void FusionMapper::filterMatches() {
-    removeAlignables();
+    // calc the sequence number before any filtering
+    int total = 0;
+    for(int i=0; i<mFusionMatchSize; i++)
+        total += fusionMatches[i].size();
+
+    loginfo( string("sequence number before filtering: ") + string( int2str(total )));
+
     removeByDistance();
+    removeIndels();
+    removeAlignables();
 }
 
 void FusionMapper::removeByDistance() {
+    // diff should be less than DIFF_THRESHOLD
+    const int DIFF_THRESHOLD = 3;
+    int removed = 0;
+    for(int i=0; i<mFusionMatchSize; i++) {
+        for(int m=fusionMatches[i].size()-1 ;m>=0; m--) {
+            if(fusionMatches[i][m]->mLeftDistance >= DIFF_THRESHOLD 
+                || fusionMatches[i][m]->mRightDistance >= DIFF_THRESHOLD) {
+                delete fusionMatches[i][m];
+                fusionMatches[i].erase(fusionMatches[i].begin() + m);
+                removed++;
+            }
+        }
+    }
+    loginfo( string("removeByDistance: ") + string( int2str(removed )));
+}
+
+void FusionMapper::removeIndels() {
+    // diff should be greather than INDEL_THRESHOLD
+    const int INDEL_THRESHOLD = 50;
+    int removed = 0;
+    for(int i=0; i<mFusionMatchSize; i++) {
+        for(int m=fusionMatches[i].size()-1 ;m>=0; m--) {
+            if(fusionMatches[i][m]->mLeftGP.contig == fusionMatches[i][m]->mRightGP.contig 
+                && abs(fusionMatches[i][m]->mLeftGP.position - fusionMatches[i][m]->mRightGP.position) <= INDEL_THRESHOLD) {
+                delete fusionMatches[i][m];
+                fusionMatches[i].erase(fusionMatches[i].begin() + m);
+                removed++;
+            }
+        }
+    }
+    loginfo( string("removeIndels: ") + string( int2str(removed )));
 }
 
 void FusionMapper::removeAlignables() {
@@ -172,8 +212,6 @@ void FusionMapper::removeAlignables() {
             seqs.push_back(fusionMatches[i][m]->getRead()->mSeq);
         }
     }
-
-    loginfo( string("sequence number before removeAlignables: ") + string(int2str(seqs.size())));
 
     Matcher matcher(ref, seqs);
 

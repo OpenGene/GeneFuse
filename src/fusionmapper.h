@@ -25,6 +25,7 @@ public:
 
     void removeAlignables();
     void removeByDistance();
+    void removeIndels();
     void filterMatches();
     void sortMatches();
     void freeMatches();
