@@ -1,5 +1,5 @@
 # FusionScan
-Being coded... NOT ready to be used
+Detect gene fusions from FastQ files directly
 
 # Download
 Get latest (may be not stable)
