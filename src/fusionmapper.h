@@ -22,10 +22,6 @@ public:
 
     Match* mapRead(Read* r, bool& mapable, int distanceReq = 2, int qualReq=20);
     FastaReader* getRef();
-
-    void removeAlignables();
-    void removeByDistance();
-    void removeIndels();
     void filterMatches();
     void sortMatches();
     void freeMatches();
@@ -37,6 +33,12 @@ private:
     Match* makeMatch(Read* r, vector<SeqMatch>& mapping);
     void calcDistance(Match* match);
     int calcED(string seq, int contig, int start, int end);
+
+    void removeAlignables();
+    void removeByDistance();
+    void removeIndels();
+    void removeByComplexity();
+    bool isLowComplexity(string str);
 
 public:
     string mRefFile;

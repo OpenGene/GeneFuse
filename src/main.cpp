@@ -49,6 +49,7 @@ int main(int argc, char* argv[]){
     if(fusionFile != "")
         check_file_valid(fusionFile);
 
+    loginfo("start with " + string( int2str(threadNum )) + " threads");
 
     clock_t t1 = clock();
 
@@ -56,6 +57,8 @@ int main(int argc, char* argv[]){
     fs.scan();
 
     clock_t t2 = clock();
-    printf("\n%s\n", command.c_str());
-    printf("fusionscan v%s, time used: %f ms\n", FUSIONSCAN_VER, (t2-t1)/1000.0);
+    printf("\n# %s\n", command.c_str());
+    printf("# fusionscan v%s, time used: %f ms\n", FUSIONSCAN_VER, (t2-t1)/1000.0);
+
+    loginfo("done");
 }

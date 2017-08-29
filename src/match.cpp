@@ -10,6 +10,7 @@ Match::Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int gap, b
     mLeftDistance = 0;
     mRightDistance = 0;
     mOverallDistance = 0;
+    mReversed = reversed;
 }
 
 Match::~Match(){

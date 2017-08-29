@@ -160,19 +160,53 @@ void FusionMapper::filterMatches() {
 
     loginfo( string("sequence number before filtering: ") + string( int2str(total )));
 
+    removeByComplexity();
     removeByDistance();
     removeIndels();
     removeAlignables();
 }
 
-void FusionMapper::removeByDistance() {
-    // diff should be less than DIFF_THRESHOLD
-    const int DIFF_THRESHOLD = 3;
+
+void FusionMapper::removeByComplexity() {
     int removed = 0;
     for(int i=0; i<mFusionMatchSize; i++) {
         for(int m=fusionMatches[i].size()-1 ;m>=0; m--) {
-            if(fusionMatches[i][m]->mLeftDistance >= DIFF_THRESHOLD 
-                || fusionMatches[i][m]->mRightDistance >= DIFF_THRESHOLD) {
+            string seq = fusionMatches[i][m]->mRead->mSeq.mStr;
+            int readBreak = fusionMatches[i][m]->mReadBreak;
+            if( isLowComplexity(seq.substr(0, readBreak+1)) 
+                || isLowComplexity(seq.substr(readBreak+1, seq.length() - (readBreak+1) )) ) {
+                delete fusionMatches[i][m];
+                fusionMatches[i].erase(fusionMatches[i].begin() + m);
+                removed++;
+            }
+        }
+    }
+    loginfo( string("removeByComplexity: ") + string( int2str(removed )));
+}
+
+bool FusionMapper::isLowComplexity(string str) {
+    if(str.length() < 20)
+        return true;
+
+    int diffCount = 0;
+    for(int i=0;i<str.length()-1;i++) {
+        if( str[i] != str[i+1])
+            diffCount++;
+    }
+
+    if(diffCount < 5)
+        return true;
+
+    return false;
+}
+
+void FusionMapper::removeByDistance() {
+    // diff should be less than DIFF_THRESHOLD
+    const int DIFF_THRESHOLD = 5;
+    int removed = 0;
+    for(int i=0; i<mFusionMatchSize; i++) {
+        for(int m=fusionMatches[i].size()-1 ;m>=0; m--) {
+            if(fusionMatches[i][m]->mLeftDistance + fusionMatches[i][m]->mRightDistance >= DIFF_THRESHOLD) {
                 delete fusionMatches[i][m];
                 fusionMatches[i].erase(fusionMatches[i].begin() + m);
                 removed++;
