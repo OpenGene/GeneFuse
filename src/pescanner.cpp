@@ -48,7 +48,7 @@ bool PairEndScanner::scan(){
         threads[t] = NULL;
     }
 
-    mFusionMapper->removeAlignables();
+    mFusionMapper->filterMatches();
     mFusionMapper->sortMatches();
     mFusionMapper->clusterMatches();
 

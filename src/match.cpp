@@ -1,13 +1,15 @@
 #include "match.h"
 #include <vector>
 
-Match::Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int gap, int distance, bool reversed){
+Match::Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int gap, bool reversed){
     mRead = new Read(*r);
-    mDistance = distance;
     mGap = gap;
     mReadBreak = readBreak;
     mLeftGP = leftGP;
     mRightGP = rightGP;
+    mLeftDistance = 0;
+    mRightDistance = 0;
+    mOverallDistance = 0;
 }
 
 Match::~Match(){
@@ -29,7 +31,8 @@ void Match::addOriginalPair(ReadPair* pair){
 }
 
 void Match::print(){
-    cout<<"read break: "<<mReadBreak+1;
+    cout<<"break:"<<mReadBreak+1;
+    cout<<", diff:("<<mLeftDistance<<" "<<mRightDistance<<")";
     if(mReversed)
         cout<<", read direction: reversed complement";
     else
@@ -44,7 +47,7 @@ void Match::print(){
 
 void Match::printHtmlTD(ofstream& file, int leftlen, int centerlen, int rightlen){
     file<<"<a title='"<<mRead->mName<<"'>";
-    file<<"d:" << mDistance;
+    //file<<"d:" << mDistance;
     if(mReversed)
         file<<", <--";
     else

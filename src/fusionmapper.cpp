@@ -92,7 +92,56 @@ Match* FusionMapper::makeMatch(Read* r, vector<SeqMatch>& mapping) {
     leftGP.position += readBreak;
     rightGP.position += readBreak+1;
     int gap = right.seqStart - left.seqEnd - 1;
-    return new Match(r, readBreak, leftGP, rightGP, gap);
+    Match* match = new Match(r, readBreak, leftGP, rightGP, gap);
+
+    calcDistance(match);
+
+    return match;
+}
+
+void FusionMapper::calcDistance(Match* match) {
+    string seq = match->mRead->mSeq.mStr;
+
+    int readBreak = match->mReadBreak;
+    int leftLen = readBreak+1;
+    int rightLen = seq.length() - (readBreak+1);
+
+    string leftSeq = seq.substr(0, leftLen);
+    string rightSeq = seq.substr(readBreak+1, rightLen);
+
+    //Gene& leftGene = fusionList[match->mLeftGP.contig].mGene;
+    //Gene& rightGene = fusionList[match->mRightGP.contig].mGene;
+
+    match->mLeftDistance = calcED(leftSeq, match->mLeftGP.contig, match->mLeftGP.position - leftLen + 1, match->mLeftGP.position);
+    match->mRightDistance = calcED(rightSeq, match->mRightGP.contig, match->mRightGP.position, match->mRightGP.position + rightLen - 1);
+}
+
+
+int FusionMapper::calcED(string seq, int contig, int start, int end) {
+    // check start and end are in same strand
+    if(start * end <= 0)
+        return -1;
+
+    string& fusionSeq = mIndexer->mFusionSeq[contig];
+
+    // echeck the overflow
+    if(abs(start)>=fusionSeq.length() || abs(end)>=fusionSeq.length())
+        return -2;
+
+    string str = seq;
+    if(start < 0) {
+        Sequence s(seq);
+        Sequence rc = ~s;
+        str = rc.mStr;
+
+        int tmp = start;
+        start = -end;
+        end = -tmp;
+    }
+
+    string refstr = fusionSeq.substr(start, end-start+1);
+
+    return edit_distance(str.c_str(), str.length(), refstr.c_str(), refstr.length());
 }
     
 void FusionMapper::addMatch(Match* m) {
@@ -100,6 +149,14 @@ void FusionMapper::addMatch(Match* m) {
     int rightContig = m->mRightGP.contig;
     int index = fusionList.size() * rightContig + leftContig;
     fusionMatches[index].push_back(m);
+}
+
+void FusionMapper::filterMatches() {
+    removeAlignables();
+    removeByDistance();
+}
+
+void FusionMapper::removeByDistance() {
 }
 
 void FusionMapper::removeAlignables() {
@@ -135,7 +192,7 @@ void FusionMapper::removeAlignables() {
             }
         }
     }
-    loginfo( string("removed: ") + string( int2str(removed )));
+    loginfo( string("removeAlignables: ") + string( int2str(removed )));
 }
 
 void FusionMapper::sortMatches() {

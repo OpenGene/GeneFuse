@@ -24,6 +24,8 @@ public:
     FastaReader* getRef();
 
     void removeAlignables();
+    void removeByDistance();
+    void filterMatches();
     void sortMatches();
     void freeMatches();
     void clusterMatches();
@@ -32,6 +34,8 @@ public:
 private:
     void init();
     Match* makeMatch(Read* r, vector<SeqMatch>& mapping);
+    void calcDistance(Match* match);
+    int calcED(string seq, int contig, int start, int end);
 
 public:
     string mRefFile;

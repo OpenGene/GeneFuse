@@ -23,7 +23,7 @@ using namespace std;
 
 class Match{
 public:
-    Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int gap, int distance = 0, bool reversed = false);
+    Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int gap, bool reversed = false);
     ~Match();
     void print();
     void printHtmlTD(ofstream& file, int leftlen, int centerlen, int rightlen);
@@ -55,7 +55,9 @@ public:
 public:
     Read* mRead;
     vector<Read*> mOriginalReads;
-    int mDistance;
+    int mOverallDistance;
+    int mLeftDistance;
+    int mRightDistance;
     // the gap between left and right segment after segmentation
     int mGap;
     bool mReversed;

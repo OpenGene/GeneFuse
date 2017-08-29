@@ -212,7 +212,7 @@ Read* ReadPair::fastMerge(){
 		int offset = len1 - olen;
 		int mergedLen = offset + len2;
 		stringstream ss;
-		ss << mLeft->mName << " merged offset:" << offset << " overlap:" << olen << " diff:" << diff;
+		ss << mLeft->mName << " merged_diff_" << diff;
 		string mergedName = ss.str();
 		string mergedSeq = mLeft->mSeq.mStr.substr(0, offset) + rcRight->mSeq.mStr;
 		string mergedQual = mLeft->mQuality.substr(0, offset) + rcRight->mQuality;
