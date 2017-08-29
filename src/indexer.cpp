@@ -1,5 +1,6 @@
 #include "indexer.h"
 #include "util.h"
+#include <memory.h>
 
 const int KMER = 16;
 
