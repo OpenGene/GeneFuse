@@ -21,6 +21,7 @@ int main(int argc, char* argv[]){
     cmd.add<string>("read2", '2', "read2 file name", false, "");
     cmd.add<string>("fusion", 'f', "fusion file name, in CSV format", false, "");
     cmd.add<string>("ref", 'r', "reference fasta file name", true, "");
+    cmd.add<int>("unique", 'u', "how many unique supporting read is required to report a fusion, default is 2", false, 2);
     cmd.add<string>("html", 'h', "filename of html report, no html report if not specified", false, "");
     cmd.add<int>("thread", 't', "worker thread number, default is 4", false, 4);
     cmd.parse_check(argc, argv);
@@ -30,6 +31,10 @@ int main(int argc, char* argv[]){
     string html = cmd.get<string>("html");
     string refFile = cmd.get<string>("ref");
     int threadNum = cmd.get<int>("thread");
+    int unique = cmd.get<int>("unique");
+
+    GlobalSettings::setUniqueRequirement(unique);
+
 
     if(ends_with(refFile, ".gz") || ends_with(refFile, ".gz")) {
         cout << "reference fasta file should not be compressed.\nplease unzip "<<refFile<<" and try again."<<endl;

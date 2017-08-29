@@ -305,8 +305,10 @@ void FusionMapper::clusterMatches() {
         for(int f=0; f<frs.size(); f++) {
             frs[f].calcFusionPoint();
             frs[f].calcUnique();
-            frs[f].print(fusionList);
-            mFusionResults.push_back(frs[f]);
+            if(frs[f].mUnique >= GlobalSettings::uniqueRequirement) {
+                frs[f].print(fusionList);
+                mFusionResults.push_back(frs[f]);
+            }
         }
     }
     loginfo("found " + int2str(mFusionResults.size()) + " fusions");
