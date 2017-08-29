@@ -19,3 +19,8 @@ FusionScan only depends on `libz`, which is always available on Linux or Mac sys
 cd FusionScan
 make
 ```
+
+# Usage
+```shell
+fusionscan -r hg19.fasta -f genes/cancer.hg19.csv -1 R1.fq -2 R2.fq > result
+```
