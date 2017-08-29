@@ -194,7 +194,7 @@ bool FusionMapper::isLowComplexity(string str) {
             diffCount++;
     }
 
-    if(diffCount < 5)
+    if(diffCount < 7)
         return true;
 
     return false;
