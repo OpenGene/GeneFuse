@@ -65,8 +65,8 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
     mFile << "<table>";
     mFile << "<tr class='header'>";
     mFile << "<td class='alighright' colspan='2'></td>";
-    mFile << "<td class='alignright'>" << "left part" << "</td>";
-    mFile << "<td class='alignleft'>" << "right part" << "</td>";
+    mFile << "<td class='alignright'>" << "" << "</td>";
+    mFile << "<td class='alignleft'>" << "" << "</td>";
     mFile << "</tr>";
     for(int m=0; m<matches.size(); m++){
         long rowid = id*100000 + m;

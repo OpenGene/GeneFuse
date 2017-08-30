@@ -25,6 +25,7 @@ public:
     void adjustFusionBreak();
     void addMatch(Match* m);
     bool support(Match* m);
+    bool isDeletion();
     static bool supportSame(Match* m1, Match* m2);
 
 public:

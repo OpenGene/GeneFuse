@@ -76,9 +76,21 @@ void FusionResult::calcUnique() {
     }
 }
 
+bool FusionResult::isDeletion() {
+    if(mLeftGP.contig == mRightGP.contig ) {
+       if(mLeftGP.position>0 && mRightGP.position>0)
+        return true;
+       if(mLeftGP.position<0 && mRightGP.position<0)
+        return true;
+    }
+    return false;
+}
 void FusionResult::makeTitle(vector<Fusion>& fusions) {
     stringstream ss;
-    ss  << "Fusion: ";
+    if(isDeletion())
+        ss  << "Deletion: ";
+    else
+        ss  << "Fusion: ";
     ss << fusions[mLeftGP.contig].pos2str(mLeftGP.position) << "_";
     ss << fusions[mRightGP.contig].pos2str(mRightGP.position) ;
     ss << " (total: " << mMatches.size() << ", unique:" << mUnique <<")";
