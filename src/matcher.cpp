@@ -145,8 +145,6 @@ MatchResult* Matcher::mapToIndex(Sequence& sequence) {
 
     // first pass, we only want to find if this seq can be partially aligned to the target
     bool valid = false;
-    int pos=0;
-    int stat=0;
     for(int i=0; i< seqlen - KMER + 1; i += step) {
         unsigned int kmer = makeKmer(seq, i, valid);
         kmerValid[i] = valid;

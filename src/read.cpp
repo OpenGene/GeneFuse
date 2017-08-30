@@ -124,6 +124,7 @@ string Read::lastIndex(){
 			return mName.substr(i+1, len-i);
 		}
 	}
+	return "";
 }
 
 int Read::lowQualCount(int qual){
@@ -210,7 +211,6 @@ Read* ReadPair::fastMerge(){
 
 	if(overlapped){
 		int offset = len1 - olen;
-		int mergedLen = offset + len2;
 		stringstream ss;
 		ss << mLeft->mName << " merged_diff_" << diff;
 		string mergedName = ss.str();
