@@ -51,8 +51,8 @@ bool SingleEndScanner::scan(){
     mFusionMapper->sortMatches();
     mFusionMapper->clusterMatches();
 
-    textReport(mFusionMapper->fusionList, mFusionMapper->fusionMatches);
-    htmlReport(mFusionMapper->fusionList, mFusionMapper->fusionMatches);
+    textReport();
+    htmlReport();
 
     mFusionMapper->freeMatches();
 
@@ -217,13 +217,13 @@ void SingleEndScanner::consumerTask()
     }
 }
 
-void SingleEndScanner::textReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches) {
+void SingleEndScanner::textReport() {
 }
 
-void SingleEndScanner::htmlReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches) {
+void SingleEndScanner::htmlReport() {
     if(mHtmlFile == "")
         return;
 
-    HtmlReporter reporter(mHtmlFile, mFusionMapper->fusionList, fusionMatches);
+    HtmlReporter reporter(mHtmlFile, mFusionMapper);
     reporter.run();
 }

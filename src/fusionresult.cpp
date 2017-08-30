@@ -1,4 +1,5 @@
 #include "fusionresult.h"
+#include <sstream>
 
 FusionResult::FusionResult() {
 
@@ -75,6 +76,15 @@ void FusionResult::calcUnique() {
     }
 }
 
+void FusionResult::makeTitle(vector<Fusion>& fusions) {
+    stringstream ss;
+    ss  << "Fusion: ";
+    ss << fusions[mLeftGP.contig].pos2str(mLeftGP.position) << "_";
+    ss << fusions[mRightGP.contig].pos2str(mRightGP.position) ;
+    ss << " (total: " << mMatches.size() << ", unique:" << mUnique <<")";
+    mTitle = ss.str();
+}
+
 void FusionResult::adjustFusionBreak() {
     for(int i=0; i<mMatches.size(); i++) {
         int shift = mLeftGP.position - mMatches[i]->mLeftGP.position;
@@ -88,11 +98,7 @@ void FusionResult::adjustFusionBreak() {
 }
 
 void FusionResult::print(vector<Fusion>& fusions) {
-    cout << endl << "#Fusion: ";
-    cout << fusions[mLeftGP.contig].pos2str(mLeftGP.position) << "_";
-    cout << fusions[mRightGP.contig].pos2str(mRightGP.position) ;
-    cout << " (total: " << mMatches.size() << ", unique:" << mUnique <<")";
-    cout << endl;
+    cout << endl << "#" << mTitle << endl;
     for(int i=0; i<mMatches.size(); i++) {
         cout << ">" << i+1 << ", ";
         mMatches[i]->print();

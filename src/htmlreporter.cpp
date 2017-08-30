@@ -2,9 +2,9 @@
 #include "common.h"
 #include <chrono>
 
-HtmlReporter::HtmlReporter(string filename, vector<Fusion>& fusionList, vector<Match*> *fusionMatches){
-    mFusionList = fusionList;
-    mFusionMatches = fusionMatches;
+HtmlReporter::HtmlReporter(string filename, FusionMapper* mapper){
+    mFusionMapper = mapper;
+    mFusionResults = mapper->mFusionResults;
     mFilename = filename;
     mFile.open(mFilename.c_str(), ifstream::out);
 }
@@ -32,40 +32,27 @@ void HtmlReporter::printHelper() {
 
 void HtmlReporter::printFusions() {
     // calculate the found fusion
-    /*
-    int found = 0;
-    for(int i=0;i<mFusionList.size();i++){
-        vector<Match*> matches = mFusionMatches[i];
-        if(matches.size()>0){
-            found++;
-        }
-    }
+    int found = mFusionResults.size();
     // print menu
     mFile<<"<div id='menu'><p>Found "<< found << " fusion";
     if(found>1)
         mFile<<"s";
     mFile<<":</p><ul>";
     int id = 0;
-    for(int i=0;i<mFusionList.size();i++){
-        vector<Match*> matches = mFusionMatches[i];
-        if(matches.size()>0){
-            id++;
-            mFile<<"<li class='menu_item'><a href='#"<<mFusionList[i].mName<<"'> " << id << ", " << mFusionList[i].mName;
-            mFile<< " (" << matches.size() << " reads support, " << Match::countUnique(matches) << " unique)" << "</a></li>";
-        }
+    for(int i=0;i<mFusionResults.size();i++){
+        id++;
+        mFile <<"<li class='menu_item'><a href='#fusion_id_"<<id<<"'> " << id << ", " << mFusionResults[i].mTitle;
+        mFile << "</a></li>";
     }
     mFile<<"</ul></div>";
     id=0;
-    for(int i=0;i<mFusionList.size();i++){
-        vector<Match*> matches = mFusionMatches[i];
-        if(matches.size()>0){
-            id++;
-            printFusion(id, mFusionList[i], matches);
-        }
-    }*/
+    for(int i=0;i<mFusionResults.size();i++){
+        id++;
+        printFusion(id, mFusionResults[i]);
+    }
 }
 
-void HtmlReporter::printFusion(int id, Fusion& fusion, vector<Match*>& matches){
+void HtmlReporter::printFusion(int id, FusionResult& fusion){
     /*
     mFile << "<div class='fusion_block'>";
     mFile << "<div class='fusion_head'><a name='" << fusion.mName << "'>";
@@ -107,7 +94,7 @@ void HtmlReporter::printFusion(int id, Fusion& fusion, vector<Match*>& matches){
 
 void HtmlReporter::printHeader(){
     mFile << "<html><head><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" />";
-    mFile << "<title>MutScan report</title>";
+    mFile << "<title>FusionScan report</title>";
     printJS();
     printCSS();
     mFile << "</head>";
@@ -180,18 +167,18 @@ void HtmlReporter::printFooter(){
     mFile << "<div id='footer'> ";
     mFile << "<p>"<<command<<"</p>";
     printScanTargets();
-    mFile << "MutScan " << FUSIONSCAN_VER << ", at " << getCurrentSystemTime() << " </div>";
+    mFile << "FusionScan " << FUSIONSCAN_VER << ", at " << getCurrentSystemTime() << " </div>";
     mFile << "</div></body></html>";
 }
 
 void HtmlReporter::printScanTargets(){/*
     mFile << "<div id='targets'> ";
-    mFile << "<p> scanned " << mFusionList.size() << " fusion spots...<input type='button' id='target_view_btn', onclick=toggle_target_list('target_list'); value='show'></input></p>";
+    mFile << "<p> scanned " << mFusionResults.size() << " fusion spots...<input type='button' id='target_view_btn', onclick=toggle_target_list('target_list'); value='show'></input></p>";
     mFile << "<ul id='target_list' style='display:none'>";
     int id=0;
-    for(int i=0;i<mFusionList.size();i++){
+    for(int i=0;i<mFusionResults.size();i++){
         id++;
-        mFile<<"<li> " << id << ", " << mFusionList[i].mName << "</li>";
+        mFile<<"<li> " << id << ", " << mFusionResults[i].mName << "</li>";
     }
     mFile << "</ul></div>";
     */

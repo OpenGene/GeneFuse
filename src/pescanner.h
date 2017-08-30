@@ -41,8 +41,8 @@ public:
     PairEndScanner(string fusionFile, string refFile, string read1File, string read2File, string html="", int threadnum=1);
     ~PairEndScanner();
     bool scan();
-    void textReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches);
-    void htmlReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches);
+    void textReport();
+    void htmlReport();
 
 private:
     bool scanPairEnd(ReadPairPack* pack);

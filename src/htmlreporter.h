@@ -9,12 +9,13 @@
 #include "match.h"
 #include <iostream>
 #include <fstream>
+#include "fusionmapper.h"
 
 using namespace std;
 
 class HtmlReporter{
 public:
-    HtmlReporter(string filename, vector<Fusion>& fusionList, vector<Match*> *fusionMatches);
+    HtmlReporter(string filename, FusionMapper* mapper);
     ~HtmlReporter();
     void run();
 
@@ -25,14 +26,14 @@ private:
     void printFooter();
     void printHelper();
     void printFusions();
-    void printFusion(int id, Fusion& fusion, vector<Match*>& matches);
+    void printFusion(int id, FusionResult& fusion);
     void printScanTargets();
 
 private:
     string mFilename;
-    vector<Fusion> mFusionList;
-    vector<Match*>* mFusionMatches;
+    FusionMapper* mFusionMapper;
     ofstream mFile;
+    vector<FusionResult> mFusionResults;
 };
 
 

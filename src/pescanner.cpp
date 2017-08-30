@@ -52,8 +52,7 @@ bool PairEndScanner::scan(){
     mFusionMapper->sortMatches();
     mFusionMapper->clusterMatches();
 
-    textReport(mFusionMapper->fusionList, mFusionMapper->fusionMatches);
-    htmlReport(mFusionMapper->fusionList, mFusionMapper->fusionMatches);
+    htmlReport();
 
     mFusionMapper->freeMatches();
     return true;
@@ -260,13 +259,13 @@ void PairEndScanner::consumerTask()
     }
 }
 
-void PairEndScanner::textReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches) {
+void PairEndScanner::textReport() {
 }
 
-void PairEndScanner::htmlReport(vector<Fusion>& fusionList, vector<Match*> *fusionMatches) {
+void PairEndScanner::htmlReport() {
     if(mHtmlFile == "")
         return;
 
-    HtmlReporter reporter(mHtmlFile, fusionList, fusionMatches);
+    HtmlReporter reporter(mHtmlFile, mFusionMapper);
     reporter.run();
 }
