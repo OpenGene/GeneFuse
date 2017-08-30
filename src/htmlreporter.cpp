@@ -64,7 +64,7 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
     mFile << "</a></div>";
     mFile << "<table>";
     mFile << "<tr class='header'>";
-    mFile << "<td class='alighright' colspan='2'></td>";
+    mFile << "<td class='alighright' colspan='2' width='100' style='border-right:0px;'></td>";
     mFile << "<td class='alignright'>" << "" << "</td>";
     mFile << "<td class='alignleft'>" << "" << "</td>";
     mFile << "</tr>";
