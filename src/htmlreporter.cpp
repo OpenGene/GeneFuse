@@ -24,9 +24,13 @@ void HtmlReporter::printHelper() {
     mFile << "<div id='helper'><p>Helpful tips:</p><ul>";
     mFile << "<li> Base color indicates quality: <font color='#78C6B9'>extremely high (Q40+)</font>, <font color='#33BBE2'>high (Q30+)</font>, <font color='#666666'>moderate (Q20+)</font>, <font color='#E99E5B'>low (Q15+)</font>, <font color='#FF0000'>extremely low (0~Q14)</font> </li>";
     mFile << "<li> Move mouse over the base, it will show the quality value</li>";
-    mFile << "<li> Click on any row, the original read/pair will be displayed</li>";
-    mFile << "<li> In first column, <i>d</i> means the edit distance of match, and --> means forward, <-- means reverse </li>";
-    mFile << "<li> For pair-end sequencing, MutScan tries to merge each pair, and the overlapped bases will be assigned higher qualities </li>";
+    mFile << "<li> Click on any row, the original read/pair will be displayed</li>";    
+    mFile << "<li> For pair-end sequencing, FusionScan tries to merge each pair, with overlapped assigned higher qualities </li>";
+    mFile << "</ul><p>Columns:</p><ul>";
+    mFile << "<li> col1: which read is mapped, --> means original read, <-- means reverse complement</li>";
+    mFile << "<li> col2: edit distance (ed) between read and reference sequence (left_part_ed, right_part_ed)</li>";
+    mFile << "<li> col3: read's left mate</li>";
+    mFile << "<li> col4: read's right mate</li>";
     mFile << "</ul></div>";
 }
 
@@ -53,24 +57,22 @@ void HtmlReporter::printFusions() {
 }
 
 void HtmlReporter::printFusion(int id, FusionResult& fusion){
-    /*
+    vector<Match*> matches = fusion.mMatches;
     mFile << "<div class='fusion_block'>";
-    mFile << "<div class='fusion_head'><a name='" << fusion.mName << "'>";
-    mFile << id << ", " << fusion.mName<< " (" << matches.size() << " reads support, " << Match::countUnique(matches) << " unique)" ;
+    mFile << "<div class='fusion_head'><a name='fusion_id_" << id << "'>";
+    mFile << id << ", " << fusion.mTitle<< " (" << matches.size() << " reads support, " <<fusion.mUnique << " unique)" ;
     mFile << "</a></div>";
     mFile << "<table>";
     mFile << "<tr class='header'>";
-    mFile << "<td class='match_brief'>" << "ID_Distance_Strand" << "</td>";
-    mFile << "<td>" << "" << "</td>";
-    mFile << "<td>" << fusion.mLeft << "</td>";
-    mFile << "<td>" << fusion.getCenterHtml() << "</td>";
-    mFile << "<td>" << fusion.mRight << "</td>";
-    mFile << "<td>" << "" << "</td>";
+    mFile << "<td class='alighright' colspan='2'></td>";
+    mFile << "<td class='alignright'>" << "left part" << "</td>";
+    mFile << "<td class='alignleft'>" << "right part" << "</td>";
     mFile << "</tr>";
     for(int m=0; m<matches.size(); m++){
         long rowid = id*100000 + m;
         mFile << "<tr onclick='toggle(" << rowid << ");'>";
         mFile << "<td>";
+        mFile<<"<a title='"<<matches[m]->mRead->mName<<"'>";
         // for display alignment
         if(m+1<10)
             mFile<<"0";
@@ -79,7 +81,7 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
         if(m+1<1000)
             mFile<<"0";
         mFile << m+1 << ", ";
-        matches[m]->printHtmlTD(mFile, fusion.mLeft.length(), fusion.mCenter.length(), fusion.mRight.length());
+        matches[m]->printHtmlTD(mFile);
         mFile << "</tr>";
         // print a hidden row containing the full read
         mFile << "<tr id='" << rowid << "' style='display:none;'>";
@@ -89,7 +91,6 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
         mFile << "</tr>";
     }
     mFile << "</table></div>";
-    */
 }
 
 void HtmlReporter::printHeader(){

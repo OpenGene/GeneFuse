@@ -1,5 +1,6 @@
 #include "match.h"
 #include <vector>
+#include "util.h"
 
 Match::Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int gap, bool reversed){
     mRead = new Read(*r);
@@ -46,21 +47,19 @@ void Match::print(){
     cout << endl;
 }
 
-void Match::printHtmlTD(ofstream& file, int leftlen, int centerlen, int rightlen){
-    file<<"<a title='"<<mRead->mName<<"'>";
+void Match::printHtmlTD(ofstream& file){
     //file<<"d:" << mDistance;
     if(mReversed)
-        file<<", <--";
+        file<<" <--";
     else
-        file<<", -->";
+        file<<" -->";
 
     file<<"</a></span>";
 
+    file<<"</td><td>(" << int2str(mLeftDistance) << ", " << int2str(mRightDistance) << ")</td>";
+
     vector<int> breaks;
-    breaks.push_back(max(mReadBreak-leftlen, 0));
-    breaks.push_back( mReadBreak );
-    breaks.push_back( mReadBreak+centerlen );
-    breaks.push_back( min(mReadBreak+centerlen+rightlen, mRead->length()));
+    breaks.push_back( mReadBreak+1 );
     mRead->printHtmlTDWithBreaks(file, breaks);
 }
 

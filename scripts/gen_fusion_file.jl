@@ -4,11 +4,11 @@ using ArgParse
 
 function main(args)
 
-    s = ArgParseSettings(description = "gene a fusion CSV file for given gene list")
+    s = ArgParseSettings(description = "generate a fusion CSV file for given gene list")
 
     @add_arg_table s begin
         "--genes",  "-g"
-            help = "the file giving gene list (separated by comma, space or line break)"
+            help = "the file giving gene list (separated by space, tab or line break)"
             required = true
         "--ref",  "-r"
             help = "the reference genome to use (hg19/hg37/grch38)"
