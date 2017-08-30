@@ -60,7 +60,6 @@ function detect(ref, genes, fusion)
             end
             println(genename)
             g = gene_matches[1]
-            write(output, ">", genename, ",", g.chr, ":", string(g.start_pos), "-", string(g.end_pos), "\n")
 
             # get the correct transcript if it is specified
             target_tr = nothing
@@ -83,10 +82,11 @@ function detect(ref, genes, fusion)
                     if length(tr.exons)>longest
                         longest = length(tr.exons)
                         target_tr = tr
-                        break
                     end
                 end
             end
+
+            write(output, ">", gene, "_", target_tr.id, ",", g.chr, ":", string(g.start_pos), "-", string(g.end_pos), "\n")
 
             exons = target_tr.exons
             id = 1
