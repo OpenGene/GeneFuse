@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <algorithm>
 #include <time.h>
+#include "common.h"
 
 using namespace std;
 
@@ -177,7 +178,8 @@ inline void str2lower(string& s){
 inline void loginfo(const string s){
     time_t tt = time(NULL);
     tm* t= localtime(&tt);
-    cerr<<t->tm_hour<<":"<<t->tm_min<<":"<<t->tm_sec<<" "<<s<<endl;
+    if(_DEBUG)
+        cerr<<t->tm_hour<<":"<<t->tm_min<<":"<<t->tm_sec<<" "<<s<<endl;
 }
 
 inline string int2str(int num){

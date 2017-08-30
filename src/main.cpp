@@ -59,14 +59,14 @@ int main(int argc, char* argv[]){
 
     loginfo("start with " + string( int2str(threadNum )) + " threads");
 
-    clock_t t1 = clock();
+    time_t t1 = time(NULL);
 
     FusionScan fs(fusionFile, refFile, r1file, r2file, html, threadNum);
     fs.scan();
 
-    clock_t t2 = clock();
+    time_t t2 = time(NULL);
     printf("\n# %s\n", command.c_str());
-    printf("# fusionscan v%s, time used: %f ms\n", FUSIONSCAN_VER, (t2-t1)/1000.0);
+    printf("# fusionscan v%s, time used: %ld seconds\n", FUSIONSCAN_VER, (t2-t1));
 
     loginfo("done");
 }
