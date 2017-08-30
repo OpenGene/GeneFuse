@@ -19,7 +19,7 @@ int main(int argc, char* argv[]){
     cmdline::parser cmd;
     cmd.add<string>("read1", '1', "read1 file name", true, "");
     cmd.add<string>("read2", '2', "read2 file name", false, "");
-    cmd.add<string>("fusion", 'f', "fusion file name, in CSV format", false, "");
+    cmd.add<string>("fusion", 'f', "fusion file name, in CSV format", true, "");
     cmd.add<string>("ref", 'r', "reference fasta file name", true, "");
     cmd.add<int>("unique", 'u', "specify the least supporting read number is required to report a fusion, default is 2", false, 2);
     cmd.add<int>("deletion", 'd', "specify the least deletion length of a intra-gene deletion to report, default is 50", false, 50);
