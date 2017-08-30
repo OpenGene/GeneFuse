@@ -75,9 +75,20 @@ function detect(ref, genes, fusion)
                 end
             end
 
-            # get the longest transcript if it is not specified
-            longest = 0
+            # get the 001 transcript
             if target_tr == nothing
+                for tr in g.transcripts
+                    tname = tr.attributes["transcript_name"]
+                    if endswith(tname, "001\"")
+                        target_tr = tr
+                        break
+                    end
+                end
+            end
+
+            # get the longest transcript if it is not specified
+            if target_tr == nothing
+                longest = 0
                 for tr in g.transcripts
                     if length(tr.exons)>longest
                         longest = length(tr.exons)
