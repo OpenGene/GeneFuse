@@ -18,10 +18,14 @@ public:
     inline static void setUniqueRequirement(int val){
         uniqueRequirement = val;
     }
+    inline static void setDeletionThreshold(int val){
+        deletionThreshold = val;
+    }
 
 public:
     static bool markedOnlyForVCF;
     static int uniqueRequirement;
+    static int deletionThreshold;
 };
 
 

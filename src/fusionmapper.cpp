@@ -218,12 +218,12 @@ void FusionMapper::removeByDistance() {
 
 void FusionMapper::removeIndels() {
     // diff should be greather than INDEL_THRESHOLD
-    const int INDEL_THRESHOLD = 50;
+    int INDEL_THRESHOLD = GlobalSettings::deletionThreshold;
     int removed = 0;
     for(int i=0; i<mFusionMatchSize; i++) {
         for(int m=fusionMatches[i].size()-1 ;m>=0; m--) {
             if(fusionMatches[i][m]->mLeftGP.contig == fusionMatches[i][m]->mRightGP.contig 
-                && abs(fusionMatches[i][m]->mLeftGP.position - fusionMatches[i][m]->mRightGP.position) <= INDEL_THRESHOLD) {
+                && abs(fusionMatches[i][m]->mLeftGP.position - fusionMatches[i][m]->mRightGP.position) < INDEL_THRESHOLD) {
                 delete fusionMatches[i][m];
                 fusionMatches[i].erase(fusionMatches[i].begin() + m);
                 removed++;
