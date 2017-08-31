@@ -38,10 +38,10 @@ void HtmlReporter::printHelper() {
     mFile << "<li> Click on any row, the original read/pair will be displayed</li>";    
     mFile << "<li> For pair-end sequencing, FusionScan tries to merge each pair, with overlapped assigned higher qualities </li>";
     mFile << "</ul><p>Columns:</p><ul>";
-    mFile << "<li> col1: which read is mapped, --> means original read, <-- means reverse complement</li>";
+    mFile << "<li> col1: is fusion mapped with original read? --> means original read, <-- means reverse complement</li>";
     mFile << "<li> col2: edit distance (ed) between read and reference sequence (left_part_ed | right_part_ed)</li>";
-    mFile << "<li> col3: read's left mate</li>";
-    mFile << "<li> col4: read's right mate</li>";
+    mFile << "<li> col3: read's left part after fusion break</li>";
+    mFile << "<li> col4: read's right part after fusion break</li>";
     mFile << "</ul></div>";
 }
 
