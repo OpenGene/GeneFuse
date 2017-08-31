@@ -22,11 +22,15 @@ public:
     void calcFusionPoint();
     void calcUnique();
     void makeTitle(vector<Fusion>& fusions);
+    void makeReference(string& refL, string& refR);
     void adjustFusionBreak();
     void addMatch(Match* m);
     bool support(Match* m);
     bool isDeletion();
     static bool supportSame(Match* m1, Match* m2);
+
+private:
+    string getRefSeq(string& ref, int start, int end);
 
 public:
     GenePos mLeftGP;
@@ -34,6 +38,10 @@ public:
     vector<Match*> mMatches;
     int mUnique;
     string mTitle;
+    string mLeftRef;
+    string mRightRef;
+    string mLeftPos;
+    string mRightPos;
 };
 
 

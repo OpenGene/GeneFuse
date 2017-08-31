@@ -64,9 +64,12 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
     mFile << "</a></div>";
     mFile << "<table>";
     mFile << "<tr class='header'>";
-    mFile << "<td class='alighright' colspan='2' width='100' style='border-right:0px;'></td>";
-    mFile << "<td class='alignright'>" << "" << "</td>";
-    mFile << "<td class='alignleft'>" << "" << "</td>";
+    mFile << "<td class='alignright' colspan='3'>" << fusion.mLeftPos << " = ↓</td>";
+    mFile << "<td class='alignleft'>↓ = " << fusion.mRightPos << "</td>";
+    mFile << "</tr>";
+    mFile << "<tr class='header'>";
+    mFile << "<td class='alignright' colspan='3'>" << fusion.mLeftRef << "</td>";
+    mFile << "<td class='alignleft'>" << fusion.mRightRef << "</td>";
     mFile << "</tr>";
     for(int m=0; m<matches.size(); m++){
         long rowid = id*100000 + m;
@@ -111,7 +114,7 @@ void HtmlReporter::printCSS(){
     mFile << ".alignright {text-align:right;}";
     mFile << ".header {color:#ffffff;padding:1px;height:20px;background:#000000;}";
     mFile << ".figuretitle {color:#996657;font-size:20px;padding:50px;}";
-    mFile << "#container {text-align:center;padding:1px;font-family:Arial;}";
+    mFile << "#container {text-align:center;padding:1px;font-family:Arail,'Liberation Mono', Menlo, Courier, monospace;}";
     mFile << "#menu {padding-top:10px;padding-bottom:10px;text-align:left;}";
     mFile << ".menu_item {text-align:left;padding-top:5px;font-size:18px;}";
     mFile << ".highlight {text-align:left;padding-top:30px;padding-bottom:30px;font-size:20px;line-height:35px;}";
@@ -119,7 +122,7 @@ void HtmlReporter::printCSS(){
     mFile << ".fusion_block {}";
     mFile << ".match_brief {font-size:8px}";
     mFile << ".fusion_point {color:#FFCCAA}";
-    mFile << "#helper {text-align:left;border:1px dotted #fafafa;color:#777777;}";
+    mFile << "#helper {text-align:left;border:1px dotted #fafafa;color:#777777;font-size:12px;}";
     mFile << "#footer {text-align:left;padding-left:10px;padding-top:20px;color:#777777;font-size:10px;}";
     mFile << "</style>";
 }

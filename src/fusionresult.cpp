@@ -78,13 +78,14 @@ void FusionResult::calcUnique() {
 
 bool FusionResult::isDeletion() {
     if(mLeftGP.contig == mRightGP.contig ) {
-       if(mLeftGP.position>0 && mRightGP.position>0)
-        return true;
-       if(mLeftGP.position<0 && mRightGP.position<0)
-        return true;
+        if(mLeftGP.position>0 && mRightGP.position>0)
+            return true;
+        if(mLeftGP.position<0 && mRightGP.position<0)
+            return true;
     }
     return false;
 }
+
 void FusionResult::makeTitle(vector<Fusion>& fusions) {
     stringstream ss;
     if(isDeletion())
@@ -95,6 +96,46 @@ void FusionResult::makeTitle(vector<Fusion>& fusions) {
     ss << fusions[mRightGP.contig].pos2str(mRightGP.position) ;
     ss << " (total: " << mMatches.size() << ", unique:" << mUnique <<")";
     mTitle = ss.str();
+
+    mLeftPos = fusions[mLeftGP.contig].pos2str(mLeftGP.position);
+    mRightPos = fusions[mRightGP.contig].pos2str(mRightGP.position);
+
+}
+
+void FusionResult::makeReference(string& refL, string& refR) {
+    int longestLeft = 0;
+    int longestRight = 0;
+
+    for(int i=0; i<mMatches.size(); i++) {
+        if(mMatches[i]->mReadBreak + 1 > longestLeft)
+            longestLeft = mMatches[i]->mReadBreak + 1;
+        if(mMatches[i]->mRead->length() - (mMatches[i]->mReadBreak + 1) > longestRight)
+            longestRight = mMatches[i]->mRead->length() - (mMatches[i]->mReadBreak + 1);
+    }
+
+    mLeftRef = getRefSeq(refL, mLeftGP.position - longestLeft + 1, mLeftGP.position);
+    mRightRef = getRefSeq(refR, mRightGP.position, mRightGP.position + longestRight - 1);
+}
+
+string FusionResult::getRefSeq(string& ref, int start, int end) {
+    // check start and end are in same strand
+    if( (start>=0 && end<=0) || (start<=0 && end>=0) ) {
+        return "";
+    }
+
+    // check the overflow
+    if(abs(start)>=ref.length() || abs(end)>=ref.length())
+        return "";
+
+    int len = abs(end - start) + 1;
+
+    if(start <0) {
+        Sequence seq(ref.substr(-end, len));
+        Sequence rcseq = ~seq;
+        return rcseq.mStr;
+    } else {
+        return ref.substr(start, len);
+    }
 }
 
 void FusionResult::adjustFusionBreak() {
