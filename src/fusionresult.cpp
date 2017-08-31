@@ -1,5 +1,10 @@
 #include "fusionresult.h"
 #include <sstream>
+#include "editdistance.h"
+#include "common.h"
+#include <stdlib.h>
+
+using namespace std;
 
 FusionResult::FusionResult() {
 
@@ -50,7 +55,6 @@ void FusionResult::calcFusionPoint() {
             mLeftGP = match->mLeftGP;
             mRightGP = match->mRightGP;
 
-            adjustFusionBreak();
             return ;
         }
         leftTotal += match->mLeftGP.position;
@@ -61,8 +65,6 @@ void FusionResult::calcFusionPoint() {
     mLeftGP.position = leftTotal/(long)mMatches.size();
     mRightGP.contig = mMatches[0]->mRightGP.contig;
     mRightGP.position = rightTotal/(long)mMatches.size();
-
-    adjustFusionBreak();
 
 }
     
@@ -140,14 +142,36 @@ string FusionResult::getRefSeq(string& ref, int start, int end) {
 
 void FusionResult::adjustFusionBreak() {
     for(int i=0; i<mMatches.size(); i++) {
-        int shift = mLeftGP.position - mMatches[i]->mLeftGP.position;
+        int smallestED = 0xFFFF;
+        int shift = 0;
+        for(int s=-3; s<=3; s++) {
+            int ed = calcED(mMatches[i], s);
+            if(ed < smallestED) {
+                smallestED = ed;
+                shift = s;
+            }
+        }
         mMatches[i]->mReadBreak += shift;
         mMatches[i]->mLeftGP.position += shift;
         mMatches[i]->mRightGP.position += shift;
-        /*if(shift != 0) {
-            cout << "after shift:" << mMatches[i]->mRightGP.position << ", mRightGP.position:" << mRightGP.position << endl;
-        }*/
     }
+}
+
+int FusionResult::calcED(Match* m, int shift) {
+    int readBreak = m->mReadBreak + shift;
+    string seq = m->mRead->mSeq.mStr;
+    int leftLen = readBreak + 1;
+    int rightLen = seq.length() - leftLen;
+    string leftSeq = seq.substr(0, leftLen);
+    string rightSeq = seq.substr(leftLen, rightLen);
+
+    int leftComp = min(20, min(leftLen, (int)mLeftRef.length()));
+    int rightComp = min(20, min(rightLen, (int)mRightRef.length()));
+
+    int leftED = edit_distance(leftSeq.substr(leftSeq.length() - leftComp, leftComp), mLeftRef.substr(mLeftRef.length() - leftComp, leftComp));
+    int rightED = edit_distance(rightSeq.substr(0, rightComp), mRightRef.substr(0, rightComp));
+
+    return leftED + rightED;
 }
 
 void FusionResult::print(vector<Fusion>& fusions) {

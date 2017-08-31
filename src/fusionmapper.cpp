@@ -307,6 +307,7 @@ void FusionMapper::clusterMatches() {
             frs[f].calcUnique();
             frs[f].makeTitle(fusionList);
             frs[f].makeReference(mIndexer->mFusionSeq[frs[f].mLeftGP.contig], mIndexer->mFusionSeq[frs[f].mRightGP.contig]);
+            frs[f].adjustFusionBreak();
             if(frs[f].mUnique >= GlobalSettings::uniqueRequirement) {
                 frs[f].print(fusionList);
                 mFusionResults.push_back(frs[f]);
