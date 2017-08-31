@@ -79,8 +79,8 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
     mFile << "<td class='alignleft'><font color='yellow'>↓</font> = " << fusion.mRightPos << "</td>";
     mFile << "</tr>";
     mFile << "<tr class='header'>";
-    mFile << "<td class='alignright' colspan='3'><a title='"<< (fusion.mLeftRef + " " + fusion.mLeftRefExt) << "'>" << fusion.mLeftRef << "</a></td>";
-    mFile << "<td class='alignleft'><a title='"<< (fusion.mRightRef + " " + fusion.mRightRefExt) << "'>" << fusion.mRightRef << "</a></td>";
+    mFile << "<td class='alignright' colspan='3'><a title='"<< (fusion.mLeftRef + "___" + fusion.mLeftRefExt) << "'>" << fusion.mLeftRef << "</a></td>";
+    mFile << "<td class='alignleft'><a title='"<< (fusion.mRightRefExt + "___" + fusion.mRightRef) << "'>" << fusion.mRightRef << "</a></td>";
     mFile << "</tr>";
     for(int m=0; m<matches.size(); m++){
         long rowid = id*100000 + m;
