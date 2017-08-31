@@ -88,6 +88,27 @@ bool FusionResult::isDeletion() {
     return false;
 }
 
+bool FusionResult::canBeMapped() {
+    if(canBeMatched(mLeftRefExt, mRightRef))
+        return true;
+    if(canBeMatched(mLeftRef, mRightRefExt))
+        return true;
+    return false;
+}
+
+bool FusionResult::canBeMatched(string& s1, string& s2) {
+    int len = s1.length();
+    for(int offset = -5; offset<=5; offset++) {
+        int start1 = max(0, offset);
+        int start2 = max(0, -offset);
+        int cmplen = len - abs(offset);
+        int ed = edit_distance(s1.substr(start1, cmplen), s2.substr(start2, cmplen));
+        if(ed<=1)
+            return true;
+    }
+    return false;
+}
+
 void FusionResult::makeTitle(vector<Fusion>& fusions) {
     stringstream ss;
     if(isDeletion())
@@ -117,6 +138,9 @@ void FusionResult::makeReference(string& refL, string& refR) {
 
     mLeftRef = getRefSeq(refL, mLeftGP.position - longestLeft + 1, mLeftGP.position);
     mRightRef = getRefSeq(refR, mRightGP.position, mRightGP.position + longestRight - 1);
+
+    mLeftRefExt = getRefSeq(refL, mLeftGP.position, mLeftGP.position + longestRight - 1);
+    mRightRefExt = getRefSeq(refR, mRightGP.position - longestLeft + 1, mRightGP.position);
 }
 
 string FusionResult::getRefSeq(string& ref, int start, int end) {

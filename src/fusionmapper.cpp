@@ -304,11 +304,11 @@ void FusionMapper::clusterMatches() {
         }
         for(int f=0; f<frs.size(); f++) {
             frs[f].calcFusionPoint();
-            frs[f].calcUnique();
-            frs[f].makeTitle(fusionList);
             frs[f].makeReference(mIndexer->mFusionSeq[frs[f].mLeftGP.contig], mIndexer->mFusionSeq[frs[f].mRightGP.contig]);
             frs[f].adjustFusionBreak();
-            if(frs[f].mUnique >= GlobalSettings::uniqueRequirement) {
+            frs[f].calcUnique();
+            frs[f].makeTitle(fusionList);
+            if(frs[f].mUnique >= GlobalSettings::uniqueRequirement && !frs[f].canBeMapped()) {
                 frs[f].print(fusionList);
                 mFusionResults.push_back(frs[f]);
             }

@@ -27,6 +27,8 @@ public:
     void addMatch(Match* m);
     bool support(Match* m);
     bool isDeletion();
+    bool canBeMapped();
+    bool canBeMatched(string& s1, string& s2);
     static bool supportSame(Match* m1, Match* m2);
 
 private:
@@ -41,6 +43,8 @@ public:
     string mTitle;
     string mLeftRef;
     string mRightRef;
+    string mLeftRefExt;
+    string mRightRefExt;
     string mLeftPos;
     string mRightPos;
 };
