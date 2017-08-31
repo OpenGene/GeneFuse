@@ -98,15 +98,25 @@ bool FusionResult::canBeMapped() {
 
 bool FusionResult::canBeMatched(string& s1, string& s2) {
     int len = s1.length();
-    for(int offset = -5; offset<=5; offset++) {
+    for(int offset = -6; offset<=6; offset++) {
         int start1 = max(0, offset);
         int start2 = max(0, -offset);
         int cmplen = len - abs(offset);
         int ed = edit_distance(s1.substr(start1, cmplen), s2.substr(start2, cmplen));
-        if(ed<=1)
+        if(ed<=2)
             return true;
     }
     return false;
+}
+
+bool FusionResult::isQualified() {
+    if(mUnique<2)
+        return false;
+    if(canBeMapped())
+        return false;
+    if(mLeftRef.length() <= 30 || mRightRef.length()<= 30)
+        return false;
+    return true;
 }
 
 void FusionResult::makeTitle(vector<Fusion>& fusions) {

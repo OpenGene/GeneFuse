@@ -29,6 +29,7 @@ public:
     bool isDeletion();
     bool canBeMapped();
     bool canBeMatched(string& s1, string& s2);
+    bool isQualified();
     static bool supportSame(Match* m1, Match* m2);
 
 private:
