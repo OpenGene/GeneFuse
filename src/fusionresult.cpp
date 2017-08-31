@@ -92,9 +92,9 @@ void FusionResult::makeTitle(vector<Fusion>& fusions) {
         ss  << "Deletion: ";
     else
         ss  << "Fusion: ";
-    ss << fusions[mLeftGP.contig].pos2str(mLeftGP.position) << "_";
+    ss << fusions[mLeftGP.contig].pos2str(mLeftGP.position) << "___";
     ss << fusions[mRightGP.contig].pos2str(mRightGP.position) ;
-    ss << " (total: " << mMatches.size() << ", unique:" << mUnique <<")";
+    ss << "  (total: " << mMatches.size() << ", unique:" << mUnique <<")";
     mTitle = ss.str();
 
     mLeftPos = fusions[mLeftGP.contig].pos2str(mLeftGP.position);

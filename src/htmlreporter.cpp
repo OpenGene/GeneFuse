@@ -2,6 +2,17 @@
 #include "common.h"
 #include <chrono>
 
+const std::string getCurrentSystemTime()
+{
+  auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  struct tm* ptm = localtime(&tt);
+  char date[60] = {0};
+  sprintf(date, "%d-%02d-%02d      %02d:%02d:%02d",
+    (int)ptm->tm_year + 1900,(int)ptm->tm_mon + 1,(int)ptm->tm_mday,
+    (int)ptm->tm_hour,(int)ptm->tm_min,(int)ptm->tm_sec);
+  return std::string(date);
+}
+
 HtmlReporter::HtmlReporter(string filename, FusionMapper* mapper){
     mFusionMapper = mapper;
     mFusionResults = mapper->mFusionResults;
@@ -22,13 +33,13 @@ void HtmlReporter::run() {
 
 void HtmlReporter::printHelper() {
     mFile << "<div id='helper'><p>Helpful tips:</p><ul>";
-    mFile << "<li> Base color indicates quality: <font color='#78C6B9'>extremely high (Q40+)</font>, <font color='#33BBE2'>high (Q30+)</font>, <font color='#666666'>moderate (Q20+)</font>, <font color='#E99E5B'>low (Q15+)</font>, <font color='#FF0000'>extremely low (0~Q14)</font> </li>";
+    mFile << "<li> Base color indicates quality: <font color='#78C6B9'>extremely high (Q40+)</font>, <font color='#33BBE2'>high (Q30~Q39) </font>, <font color='#666666'>moderate (Q20~Q29)</font>, <font color='#E99E5B'>low (Q15~Q19)</font>, <font color='#FF0000'>extremely low (0~Q14).</font> </li>";
     mFile << "<li> Move mouse over the base, it will show the quality value</li>";
     mFile << "<li> Click on any row, the original read/pair will be displayed</li>";    
     mFile << "<li> For pair-end sequencing, FusionScan tries to merge each pair, with overlapped assigned higher qualities </li>";
     mFile << "</ul><p>Columns:</p><ul>";
     mFile << "<li> col1: which read is mapped, --> means original read, <-- means reverse complement</li>";
-    mFile << "<li> col2: edit distance (ed) between read and reference sequence (left_part_ed, right_part_ed)</li>";
+    mFile << "<li> col2: edit distance (ed) between read and reference sequence (left_part_ed | right_part_ed)</li>";
     mFile << "<li> col3: read's left mate</li>";
     mFile << "<li> col4: read's right mate</li>";
     mFile << "</ul></div>";
@@ -60,12 +71,12 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
     vector<Match*> matches = fusion.mMatches;
     mFile << "<div class='fusion_block'>";
     mFile << "<div class='fusion_head'><a name='fusion_id_" << id << "'>";
-    mFile << id << ", " << fusion.mTitle<< " (" << matches.size() << " reads support, " <<fusion.mUnique << " unique)" ;
+    mFile << id << ", " << fusion.mTitle ;
     mFile << "</a></div>";
     mFile << "<table>";
     mFile << "<tr class='header'>";
-    mFile << "<td class='alignright' colspan='3'>" << fusion.mLeftPos << " = ↓</td>";
-    mFile << "<td class='alignleft'>↓ = " << fusion.mRightPos << "</td>";
+    mFile << "<td class='alignright' colspan='3'>" << fusion.mLeftPos << " = <font color='yellow'>↓</font></td>";
+    mFile << "<td class='alignleft'><font color='yellow'>↓</font> = " << fusion.mRightPos << "</td>";
     mFile << "</tr>";
     mFile << "<tr class='header'>";
     mFile << "<td class='alignright' colspan='3'>" << fusion.mLeftRef << "</td>";
@@ -83,7 +94,7 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
             mFile<<"0";
         if(m+1<1000)
             mFile<<"0";
-        mFile << m+1 << ", ";
+        mFile << m+1;
         matches[m]->printHtmlTD(mFile);
         mFile << "</tr>";
         // print a hidden row containing the full read
@@ -98,11 +109,12 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
 
 void HtmlReporter::printHeader(){
     mFile << "<html><head><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" />";
-    mFile << "<title>FusionScan report</title>";
+    mFile << "<title>FusionScan " << FUSIONSCAN_VER << ", at " << getCurrentSystemTime() << "</title>";
     printJS();
     printCSS();
     mFile << "</head>";
     mFile << "<body><div id='container'>";
+    mFile << "<div class='software'> FusionScan <font size='-1'>" << FUSIONSCAN_VER << "</font></div>";
 }
 
 void HtmlReporter::printCSS(){
@@ -112,10 +124,13 @@ void HtmlReporter::printCSS(){
     mFile << "img {padding:30px;}";
     mFile << ".alignleft {text-align:left;}";
     mFile << ".alignright {text-align:right;}";
+    mFile << ".software {font-weight:bold;font-size:24px;padding:5px;}";
     mFile << ".header {color:#ffffff;padding:1px;height:20px;background:#000000;}";
     mFile << ".figuretitle {color:#996657;font-size:20px;padding:50px;}";
     mFile << "#container {text-align:center;padding:1px;font-family:Arail,'Liberation Mono', Menlo, Courier, monospace;}";
     mFile << "#menu {padding-top:10px;padding-bottom:10px;text-align:left;}";
+    mFile << "#menu a {color:#0366d6; font-size:18px;font-weight:600;line-height:28px;text-decoration:none;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'}";
+    mFile << "a:visited {color: #999999}";
     mFile << ".menu_item {text-align:left;padding-top:5px;font-size:18px;}";
     mFile << ".highlight {text-align:left;padding-top:30px;padding-bottom:30px;font-size:20px;line-height:35px;}";
     mFile << ".fusion_head {text-align:left;color:#0092FF;font-family:Arial;padding-top:20px;padding-bottom:5px;}";
@@ -152,17 +167,6 @@ void HtmlReporter::printJS(){
                 } \n\
             }";
     mFile << "</script>";
-}
-
-const std::string getCurrentSystemTime()
-{
-  auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-  struct tm* ptm = localtime(&tt);
-  char date[60] = {0};
-  sprintf(date, "%d-%02d-%02d      %02d:%02d:%02d",
-    (int)ptm->tm_year + 1900,(int)ptm->tm_mon + 1,(int)ptm->tm_mday,
-    (int)ptm->tm_hour,(int)ptm->tm_min,(int)ptm->tm_sec);
-  return std::string(date);
 }
 
 extern string command;

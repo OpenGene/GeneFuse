@@ -50,13 +50,13 @@ void Match::print(){
 void Match::printHtmlTD(ofstream& file){
     //file<<"d:" << mDistance;
     if(mReversed)
-        file<<" <--";
+        file<<"<--";
     else
-        file<<" -->";
+        file<<"-->";
 
     file<<"</a></span>";
 
-    file<<"</td><td>(" << int2str(mLeftDistance) << ", " << int2str(mRightDistance) << ")</td>";
+    file<<"</td><td>" << int2str(mLeftDistance) << "|" << int2str(mRightDistance) << "</td>";
 
     vector<int> breaks;
     breaks.push_back( mReadBreak+1 );
