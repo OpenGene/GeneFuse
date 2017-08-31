@@ -31,7 +31,7 @@ public:
 
 private:
     string getRefSeq(string& ref, int start, int end);
-    int calcED(Match* m, int shift);
+    int calcED(Match* m, int shift, int& leftED, int& rightED);
 
 public:
     GenePos mLeftGP;
