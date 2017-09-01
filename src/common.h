@@ -1,7 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define FUSIONSCAN_VER "0.1.0"
+#define FUSIONSCAN_VER "0.1.1"
 
 #define _DEBUG false
 

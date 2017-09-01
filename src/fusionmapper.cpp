@@ -188,13 +188,7 @@ bool FusionMapper::isLowComplexity(string str) {
     if(str.length() < 20)
         return true;
 
-    int diffCount = 0;
-    for(int i=0;i<str.length()-1;i++) {
-        if( str[i] != str[i+1])
-            diffCount++;
-    }
-
-    if(diffCount < 7)
+    if(dis_connected_count(str) < 7)
         return true;
 
     return false;

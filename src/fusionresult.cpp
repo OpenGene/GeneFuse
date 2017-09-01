@@ -3,6 +3,7 @@
 #include "editdistance.h"
 #include "common.h"
 #include <stdlib.h>
+#include "util.h"
 
 using namespace std;
 
@@ -103,7 +104,9 @@ bool FusionResult::canBeMatched(string& s1, string& s2) {
         int start2 = max(0, -offset);
         int cmplen = len - abs(offset);
         int ed = edit_distance(s1.substr(start1, cmplen), s2.substr(start2, cmplen));
-        if(ed<=2)
+
+        int threshold = threshold = cmplen / 10;
+        if(ed <= threshold)
             return true;
     }
     return false;
@@ -115,6 +118,10 @@ bool FusionResult::isQualified() {
     if(canBeMapped())
         return false;
     if(mLeftRef.length() <= 30 || mRightRef.length()<= 30)
+        return false;
+    if(dis_connected_count(mLeftRef.substr(mLeftRef.length()-10, 10)) <=2)
+        return false;
+    if(dis_connected_count(mRightRef.substr(0, 10)) <=2)
         return false;
     return true;
 }

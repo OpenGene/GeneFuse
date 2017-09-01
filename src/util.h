@@ -188,4 +188,13 @@ inline string int2str(int num){
     return string(str);
 }
 
+inline int dis_connected_count(string str) {
+    int diff = 0;
+    for(int i=0;i<str.length()-1;i++) {
+        if( str[i] != str[i+1])
+            diff++;
+    }
+    return diff;
+}
+
 #endif /* UTIL_H */
