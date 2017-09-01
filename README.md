@@ -57,3 +57,7 @@ The fusion file is a list of coordinated target genes together with their exons.
 5,29606598,29606725
 ...
 ```
+The coordination system should be consistent with the reference genome.   
+Two fusion files are provided with `fusionscan`:
+* `genes/cancer.hg19.csv`: all COSMIC curated fusion genes based on `hg19/GRch37` reference assembly.
+* `genes/cancer.hg38.csv`: all COSMIC curated fusion genes based on `hg38/GRch38` reference assembly.
