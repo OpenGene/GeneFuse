@@ -1,6 +1,9 @@
 # FusionScan
 Gene fusion detection and visualization
 
+# Take a quick glance of the informative report
+* Sample report: http://opengene.org/FusionScan/report.html
+
 # Download
 Get latest (may be not stable)
 ```shell
