@@ -40,7 +40,7 @@ The reference genome should be a single whole FASTA file containg all chromosome
 
 ## Fusion file
 The fusion file is a list of coordinated target genes together with their exons. A sample is:
-```
+```CSV
 >EML4_ENST00000318522.5,chr2:42396490-42559688
 1,42396490,42396776
 2,42472645,42472827
@@ -57,7 +57,17 @@ The fusion file is a list of coordinated target genes together with their exons.
 5,29606598,29606725
 ...
 ```
-The coordination system should be consistent with the reference genome.   
+The coordination system should be consistent with the reference genome.     
 Two fusion files are provided with `fusionscan`:
 * `genes/cancer.hg19.csv`: all COSMIC curated fusion genes based on `hg19/GRch37` reference assembly.
 * `genes/cancer.hg38.csv`: all COSMIC curated fusion genes based on `hg38/GRch38` reference assembly.
+These two pre-defined fusion files should be enough for most cancer related studies, since all COSMIC curated genes are included.
+### Create a fusion file based on hg19 or hg38
+If you'd like to create a custom fusion file, you can use `scripts/gen_fusion_file.jl`, which is based on the Julia library `OpenGene.jl` to generate the fusion file you want.   
+You should prepare a file containing all genes you want, seperated by `space` or `line break`. Please note that `comma` is not supported. Each gene should be the HGNC standard name.  
+By default, the primary transcript (named as GENE_001) will be used. But you can specify the transcript by add `_TranscriptId` to the gene. For example: use `CD74_ENST00000009530` to specify the transcript of `CD74`.   
+When the gene list file (`genes.txt`) is prepared, you can used following command to generate a fusion file (`fusion.csv`):
+```shell
+julia scripts/gen_fusion_file.jl -r hg19 -g genes.txt -f fusion.csv
+```
+The reference genome is specified by `-r` option, which can be hg19/GRch37/GRch38.
