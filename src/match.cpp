@@ -50,9 +50,9 @@ void Match::print(){
 void Match::printHtmlTD(ofstream& file){
     //file<<"d:" << mDistance;
     if(mReversed)
-        file<<"<--";
+        file<<"←";
     else
-        file<<"-->";
+        file<<"→";
 
     file<<"</a></span>";
 
