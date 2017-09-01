@@ -37,3 +37,23 @@ fusionscan -r hg19.fasta -f genes/cancer.hg19.csv -1 R1.fq -2 R2.fq -h report.ht
 The reference genome should be a single whole FASTA file containg all chromosome data. This file shouldn't be compressed. For human data, typicall `hg19/GRch37` or `hg38/GRch38` assembly is used, which can be downloaded from following sites:
 * `hg19/GRch37`: ftp://ftp.ncbi.nlm.nih.gov/sra/reports/Assembly/GRCh37-HG19_Broad_variant/Homo_sapiens_assembly19.fasta
 * `hg38/GRch38`: http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
+
+## Fusion file
+The fusion file is a list of coordinated target genes together with their exons. A sample is:
+```
+>EML4_ENST00000318522.5,chr2:42396490-42559688
+1,42396490,42396776
+2,42472645,42472827
+3,42483641,42483770
+4,42488261,42488434
+5,42490318,42490446
+...
+
+>ALK_ENST00000389048.3,chr2:29415640-30144432
+1,30142859,30144432
+2,29940444,29940563
+3,29917716,29917880
+4,29754781,29754982
+5,29606598,29606725
+...
+```
