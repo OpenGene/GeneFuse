@@ -74,3 +74,14 @@ When the gene list file (`genes.txt`) is prepared, you can used following comman
 julia scripts/gen_fusion_file.jl -r hg19 -g genes.txt -f fusion.csv
 ```
 The reference genome is specified by `-r` option, which can be hg19/GRch37/GRch38.
+
+# HTML report
+FusionScan can generate very informative and interactive HTML pages to visualize the fusions with following information:
+* the fusion genes, along with their transcripts.
+* the inferred break point with reference genome coordinations.
+* the inferred fusion protein, with all exons and the transcription direction.
+* the supporting reads, with all bases colorized according to their quality scores.
+* the number of supporting reads, and how many of them are unique (the rest may be duplications)
+## A HTML report example
+![image](http://www.opengene.org/FusionScan/eml4alk.png)  
+See the HTML page of this picture: http://opengene.org/FusionScan/report.html
