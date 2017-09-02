@@ -64,7 +64,7 @@ The coordination system should be consistent with the reference genome.    
 Two fusion files are provided with `fusionscan`:
 * `genes/cancer.hg19.csv`: all COSMIC curated fusion genes (http://cancer.sanger.ac.uk/cosmic/fusion) based on `hg19/GRch37` reference assembly.
 * `genes/cancer.hg38.csv`: all COSMIC curated fusion genes (http://cancer.sanger.ac.uk/cosmic/fusion) based on `hg38/GRch38` reference assembly.
-* These two pre-defined fusion files should be enough for most cancer related studies, since all COSMIC curated genes are included. If you want to create a custom one, since next section.
+* These two pre-defined fusion files should be enough for most cancer related studies, since all COSMIC curated genes are included. If you want to create a custom one, please follow the instructions given on next section.
 ### Create a fusion file based on hg19 or hg38
 If you'd like to create a custom fusion file, you can use `scripts/gen_fusion_file.jl`, which is based on the Julia library `OpenGene.jl` to generate the fusion file you want.   
 You should prepare a file containing all genes you want, seperated by `space` or `line break`. Please note that `comma` is not supported. Each gene should be the HGNC standard name.  
