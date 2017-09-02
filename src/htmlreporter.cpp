@@ -73,6 +73,7 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
     mFile << "<div class='fusion_head'><a name='fusion_id_" << id << "'>";
     mFile << id << ", " << fusion.mTitle ;
     mFile << "</a></div>";
+    fusion.printFusionProteinHTML(mFile);
     mFile << "<table>";
     mFile << "<tr class='header'>";
     mFile << "<td class='alignright' colspan='3'>" << fusion.mLeftPos << " = <font color='yellow'>↓</font></td>";
@@ -139,6 +140,11 @@ void HtmlReporter::printCSS(){
     mFile << ".fusion_point {color:#FFCCAA}";
     mFile << "#helper {text-align:left;border:1px dotted #fafafa;color:#777777;font-size:12px;}";
     mFile << "#footer {text-align:left;padding-left:10px;padding-top:20px;color:#777777;font-size:10px;}";
+    mFile << ".exon_left{background:blue;color:white;border:0px;padding:0px;}";
+    mFile << ".exon_right{background:red;color:white;0px;padding:0px;}";
+    mFile << ".intron_left{color:blue;0px;padding:0px;}";
+    mFile << ".intron_right{color:red;0px;padding:0px;}";
+    mFile << ".protein_table{text-align:center;font-size;8px;}";
     mFile << "</style>";
 }
 

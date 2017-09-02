@@ -4,11 +4,15 @@
 #include "common.h"
 #include <stdlib.h>
 #include "util.h"
+#include <math.h>
 
 using namespace std;
 
 FusionResult::FusionResult() {
-
+    mLeftIsExon = false;
+    mRightIsExon = false;
+    mLeftExonOrIntronID = -1;
+    mRightExonOrIntronID = -1;
 }
 
 FusionResult::~FusionResult() {
@@ -126,19 +130,25 @@ bool FusionResult::isQualified() {
     return true;
 }
 
-void FusionResult::makeTitle(vector<Fusion>& fusions) {
+void FusionResult::updateInfo(vector<Fusion>& fusions) {
+    mLeftGene = fusions[mLeftGP.contig].mGene;
+    mRightGene = fusions[mRightGP.contig].mGene;
+
     stringstream ss;
     if(isDeletion())
         ss  << "Deletion: ";
     else
         ss  << "Fusion: ";
-    ss << fusions[mLeftGP.contig].pos2str(mLeftGP.position) << "___";
-    ss << fusions[mRightGP.contig].pos2str(mRightGP.position) ;
+    ss << mLeftGene.pos2str(mLeftGP.position) << "___";
+    ss << mRightGene.pos2str(mRightGP.position) ;
     ss << "  (total: " << mMatches.size() << ", unique:" << mUnique <<")";
     mTitle = ss.str();
 
-    mLeftPos = fusions[mLeftGP.contig].pos2str(mLeftGP.position);
-    mRightPos = fusions[mRightGP.contig].pos2str(mRightGP.position);
+    mLeftPos = mLeftGene.pos2str(mLeftGP.position);
+    mRightPos = mRightGene.pos2str(mRightGP.position);
+
+    mLeftGene.getExonIntron(mLeftGP.position, mLeftIsExon, mLeftExonOrIntronID);
+    mRightGene.getExonIntron(mRightGP.position, mRightIsExon, mRightExonOrIntronID);
 
 }
 
@@ -231,5 +241,200 @@ void FusionResult::print(vector<Fusion>& fusions) {
     for(int i=0; i<mMatches.size(); i++) {
         cout << ">" << i+1 << ", ";
         mMatches[i]->print();
+    }
+}
+
+
+void FusionResult::printFusionProteinHTML(ofstream& file) {
+    calcLeftExonIntronNumber();
+    calcRightExonIntronNumber();
+    float leftSize = mLeftExonNum + mLeftIntronNum;
+    float rightSize = mRightExonNum + mRightIntronNum;
+    int leftPercent = round(leftSize * 100 / (leftSize + rightSize));
+    int rightPercent = 100 - leftPercent;
+    file << "<table width='100%' class='protein_table'>\n";
+    file << "<tr>";
+    file << "<td width='" << int2str(leftPercent) << "%'>";
+    file << mLeftGene.mName;
+    file << "</td>";
+    file << "<td width='" << int2str(rightPercent) << "%'>";
+    file << mRightGene.mName;
+    file << "</td>";
+    file << "</tr>";
+    file << "<tr>";
+    file << "<td class='protein_left' width='" << int2str(leftPercent) << "%'>";
+    printLeftProteinHTML(file);
+    file << "</td>";
+    file << "<td class='protein_right' width='" << int2str(leftPercent) << "%'>";
+    printRightProteinHTML(file);
+    file << "</td>";
+    file << "</tr>";
+    file << "</table>";
+}
+
+void FusionResult::printLeftProteinHTML(ofstream& file) {
+    float totalStep = mLeftExonNum + mLeftIntronNum;
+    int exon = 1;
+    int intron = 1;
+    int step = 1;
+    float stepPercent = 100.0/totalStep;
+    float halfStepPercent = stepPercent * 0.5;
+    bool forward = isLeftProteinForward();
+    if(!forward){
+        exon = mLeftGene.mExons.size();
+        intron = exon - 1;
+        step = -1;
+    }
+    file << "<table width='100%' class='protein_table'>\n";
+    file << "<tr>";
+
+    float printExon = 0;
+    float printIntron = 0;
+
+    while(printExon < mLeftExonNum || printIntron < mLeftIntronNum) {
+        if(printExon < mLeftExonNum) {
+            float percent = stepPercent;
+            // last one is a half exon
+            if(printExon+1.0 > mLeftExonNum)
+                percent = halfStepPercent;
+            printExonIntronTD(file, true, forward, exon, percent, "exon_left");
+            printExon += 1.0;
+            exon += step;
+        }
+        if(printIntron < mLeftIntronNum) {
+            float percent = stepPercent;
+            // last one is a half intron
+            if(printIntron+1.0 > mLeftIntronNum)
+                percent = halfStepPercent;
+            printExonIntronTD(file, false, forward, intron, percent, "intron_left");
+            printIntron += 1.0;
+            intron += step;
+        }
+    }
+
+    file << "</tr>";
+    file << "</table>";
+}
+
+void FusionResult::printRightProteinHTML(ofstream& file) {
+    float totalStep = mRightExonNum + mRightIntronNum;
+    int exon = mRightExonOrIntronID;
+    int intron = mRightExonOrIntronID;
+    int step = 1;
+    float stepPercent = 100.0/totalStep;
+    float halfStepPercent = stepPercent * 0.5;
+    bool forward = isRightProteinForward();
+    if(!forward){
+        step = -1;
+    }
+    file << "<table width='100%' class='protein_table'>\n";
+    file << "<tr>";
+
+    float printExon = 0;
+    float printIntron = 0;
+
+    // print the first half intron
+    if(!mRightIsExon) {
+        printExonIntronTD(file, false, forward, intron, halfStepPercent, "intron_right");
+        printIntron += 0.5;
+        intron +=  step;
+        if(forward)
+            exon += step;
+    }
+
+    while(printExon < mRightExonNum || printIntron < mRightIntronNum) {
+        if(printExon < mRightExonNum) {
+            float percent = stepPercent;
+            if(mRightIsExon && printExon == 0.0)
+                percent = halfStepPercent;
+            printExonIntronTD(file, true, forward, exon, percent, "exon_right");
+            if(mRightIsExon && printExon == 0.0)
+                printExon += 0.5;
+            else
+                printExon += 1.0;
+            exon += step;
+        }
+        if(printIntron < mRightIntronNum) {
+            float percent = stepPercent;
+            printExonIntronTD(file, false, forward, intron, percent, "intron_right");
+            printIntron += 1.0;
+            intron += step;
+        }
+    }
+
+    file << "</tr>";
+    file << "</table>";
+}
+
+void FusionResult::printExonIntronTD(ofstream& file, bool isExon, bool forward, int number, float percent, string style) {
+    file << "<td class='"<<style<<"' width='" << int2str((int)percent) << "%'>";
+    if(isExon)
+        file << "E" << int2str(number);
+    else {
+        if(forward) 
+            file << "→";
+        else
+            file << "←";
+    }
+    file << "</td>";
+}
+
+void FusionResult::calcLeftExonIntronNumber() {
+    int totalExon = mLeftGene.mExons.size();
+    int totalIntron = totalExon - 1;
+    if(isLeftProteinForward()) {
+        if(mLeftIsExon) {
+            mLeftExonNum = mLeftExonOrIntronID - 0.5;
+            mLeftIntronNum = mLeftExonOrIntronID - 1;
+        } else {
+            mLeftExonNum = mLeftExonOrIntronID;
+            mLeftIntronNum = mLeftExonOrIntronID - 0.5;
+        }
+    } else {
+        if(mLeftIsExon) {
+            mLeftExonNum = totalExon - mLeftExonOrIntronID + 0.5;
+            mLeftIntronNum = totalIntron - mLeftExonOrIntronID + 1;
+        } else {
+            mLeftExonNum = totalExon - mLeftExonOrIntronID;
+            mLeftIntronNum = totalIntron - mLeftExonOrIntronID + 0.5;
+        }
+    }
+}
+
+void FusionResult::calcRightExonIntronNumber() {
+    int totalExon = mRightGene.mExons.size();
+    int totalIntron = totalExon - 1;
+    if(isRightProteinForward()) {
+        if(mRightIsExon) {
+            mRightExonNum = totalExon - mRightExonOrIntronID + 0.5;
+            mRightIntronNum = totalIntron - mRightExonOrIntronID + 1;
+        } else {
+            mRightExonNum = totalExon - mRightExonOrIntronID;
+            mRightIntronNum = totalIntron - mRightExonOrIntronID + 0.5;
+        }
+    } else {
+        if(mRightIsExon) {
+            mRightExonNum = mRightExonOrIntronID - 0.5;
+            mRightIntronNum = mRightExonOrIntronID - 1;
+        } else {
+            mRightExonNum = mRightExonOrIntronID;
+            mRightIntronNum = mRightExonOrIntronID - 0.5;
+        }
+    }
+}
+
+bool FusionResult::isLeftProteinForward() {
+    if(mLeftGene.isReversed()) {
+        return mLeftGP.position < 0;
+    } else {
+        return mLeftGP.position > 0;
+    }
+}
+
+bool FusionResult::isRightProteinForward() {
+    if(mRightGene.isReversed()) {
+        return mRightGP.position < 0;
+    } else {
+        return mRightGP.position > 0;
     }
 }

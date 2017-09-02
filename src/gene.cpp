@@ -118,3 +118,30 @@ string Gene::pos2str(int pos) {
 
     return ss.str();
 }
+
+
+void Gene::getExonIntron(int pos, bool& isExon, int& number) {
+    int pp = abs(pos) + mStart;
+    for(int i=0; i<mExons.size(); i++) {
+        if(pp >= mExons[i].start && pp <= mExons[i].end) {
+            isExon = true;
+            number = mExons[i].id;
+            break;
+        }
+        if(i>0) {
+            if(mReversed) {
+                if(mExons[i].end < pp && pp < mExons[i-1].start){
+                    isExon = false;
+                    number = (mExons[i].id-1);
+                    break;
+                }
+            } else {
+                if(mExons[i-1].end < pp && pp < mExons[i].start){
+                    isExon = false;
+                    number = (mExons[i].id-1);
+                    break;
+                }
+            }
+        }
+    }
+}
