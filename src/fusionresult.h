@@ -32,12 +32,12 @@ public:
     bool isQualified();
     static bool supportSame(Match* m1, Match* m2);
     void printFusionProteinHTML(ofstream& file);
+    bool isLeftProteinForward();
+    bool isRightProteinForward();
 
 private:
     string getRefSeq(string& ref, int start, int end);
     int calcED(Match* m, int shift, int& leftED, int& rightED);
-    bool isLeftProteinForward();
-    bool isRightProteinForward();
     void calcLeftExonIntronNumber();
     void calcRightExonIntronNumber();
     void printLeftProteinHTML(ofstream& file);
