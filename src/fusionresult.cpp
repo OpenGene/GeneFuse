@@ -252,6 +252,10 @@ void FusionResult::printFusionProteinHTML(ofstream& file) {
     float rightSize = mRightExonNum + mRightIntronNum;
     int leftPercent = round(leftSize * 100 / (leftSize + rightSize));
     int rightPercent = 100 - leftPercent;
+    if(leftPercent==0)
+        leftPercent = 1;
+    if(rightPercent==0)
+        rightPercent=1;
     file << "<table width='100%' class='protein_table'>\n";
     file << "<tr>";
     file << "<td width='" << int2str(leftPercent) << "%'>";
@@ -367,7 +371,10 @@ void FusionResult::printRightProteinHTML(ofstream& file) {
 }
 
 void FusionResult::printExonIntronTD(ofstream& file, bool isExon, bool forward, int number, float percent, string style) {
-    file << "<td class='"<<style<<"' width='" << int2str((int)percent) << "%'>";
+    int intPercent = (int)percent;
+    if(intPercent<=0)
+        intPercent = 1;
+    file << "<td class='"<<style<<"' width='" << int2str(intPercent) << "%'>";
     if(isExon)
         file << "E" << int2str(number);
     else {
