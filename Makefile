@@ -5,7 +5,7 @@ DIR_OBJ = ./obj
 SRC = $(wildcard ${DIR_SRC}/*.cpp)  
 OBJ = $(patsubst %.cpp,${DIR_OBJ}/%.o,$(notdir ${SRC})) 
 
-TARGET = fusionscan
+TARGET = genefuse
 
 BIN_TARGET = ${TARGET}
 
@@ -20,7 +20,7 @@ ${DIR_OBJ}/%.o:${DIR_SRC}/%.cpp make_obj_dir
 .PHONY:clean
 clean:
 	rm obj/*.o
-	rm fusionscan
+	rm genefuse
 
 make_obj_dir:
 	@if test ! -d $(DIR_OBJ) ; \
