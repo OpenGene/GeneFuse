@@ -1,25 +1,25 @@
-# FusionScan
+# GeneFuse
 Gene fusion detection and visualization
 
 # Take a quick glance of the informative report
-* Sample report: http://opengene.org/FusionScan/report.html
+* Sample report: http://opengene.org/GeneFuse/report.html
 
 # Download
 Get latest (may be not stable)
 ```shell
 # download use http
-https://github.com/OpenGene/FusionScan/archive/master.zip
+https://github.com/OpenGene/GeneFuse/archive/master.zip
 
 # or download use git
-git clone https://github.com/OpenGene/FusionScan.git
+git clone https://github.com/OpenGene/GeneFuse.git
 ```
 Get the stable releases  
-https://github.com/OpenGene/FusionScan/releases/latest
+https://github.com/OpenGene/GeneFuse/releases/latest
 
 # Build
 FusionScan only depends on `libz`, which is always available on Linux or Mac systems. If your system has no `libz`, install it first.
 ```shell
-cd FusionScan
+cd GeneFuse
 make
 ```
 
@@ -33,7 +33,7 @@ You should provide following arguments to run fusionscan
 
 ## Example
 ```shell
-fusionscan -r hg19.fasta -f genes/cancer.hg19.csv -1 R1.fq -2 R2.fq -h report.html > result
+genefuse -r hg19.fasta -f genes/cancer.hg19.csv -1 R1.fq -2 R2.fq -h report.html > result
 ```
 
 ## Reference genome
@@ -84,4 +84,4 @@ FusionScan can generate very informative and interactive HTML pages to visualize
 * the number of supporting reads, and how many of them are unique (the rest may be duplications)
 ## A HTML report example
 ![image](http://www.opengene.org/FusionScan/eml4alk.png)  
-See the HTML page of this picture: http://opengene.org/FusionScan/report.html
+See the HTML page of this picture: http://opengene.org/GeneFuse/report.html
