@@ -121,7 +121,7 @@ void HtmlReporter::printHeader(){
     printCSS();
     mFile << "</head>";
     mFile << "<body><div id='container'>";
-    mFile << "<div class='software'> GeneFuse <font size='-1'>" << FUSIONSCAN_VER << "</font></div>";
+    mFile << "<div class='software'> <a href='https://github.com/OpenGene/GeneFuse' style='text-decoration:none;' target='_blank'>GeneFuse</a> <font size='-1'>" << FUSIONSCAN_VER << "</font></div>";
 }
 
 void HtmlReporter::printCSS(){
