@@ -17,14 +17,14 @@ Get the stable releases
 https://github.com/OpenGene/GeneFuse/releases/latest
 
 # Build
-FusionScan only depends on `libz`, which is always available on Linux or Mac systems. If your system has no `libz`, install it first.
+GeneFuse only depends on `libz`, which is always available on Linux or Mac systems. If your system has no `libz`, install it first.
 ```shell
 cd GeneFuse
 make
 ```
 
 # Usage
-You should provide following arguments to run fusionscan
+You should provide following arguments to run genefuse
 * the reference genome fasta file, specified by `-r` or `--ref=`
 * the fusion setting file, specified by `-f` or `--fusion=`
 * the fastq file(s), specified by `-1` or `--read1=` for single-end data. If dealing with pair-end data, specify the read2 file by `-2` or `--read2=`
@@ -61,7 +61,7 @@ The fusion file is a list of coordinated target genes together with their exons.
 ...
 ```
 The coordination system should be consistent with the reference genome.     
-Two fusion files are provided with `fusionscan`:
+Two fusion files are provided with `genefuse`:
 * `genes/cancer.hg19.csv`: all COSMIC curated fusion genes (http://cancer.sanger.ac.uk/cosmic/fusion) based on `hg19/GRch37` reference assembly.
 * `genes/cancer.hg38.csv`: all COSMIC curated fusion genes (http://cancer.sanger.ac.uk/cosmic/fusion) based on `hg38/GRch38` reference assembly.
 * These two pre-defined fusion files should be enough for most cancer related studies, since all COSMIC curated genes are included. If you want to create a custom one, please follow the instructions given on next section.
@@ -76,12 +76,12 @@ julia scripts/gen_fusion_file.jl -r hg19 -g genes.txt -f fusion.csv
 The reference genome is specified by `-r` option, which can be hg19/GRch37/GRch38.
 
 # HTML report
-FusionScan can generate very informative and interactive HTML pages to visualize the fusions with following information:
+GeneFuse can generate very informative and interactive HTML pages to visualize the fusions with following information:
 * the fusion genes, along with their transcripts.
 * the inferred break point with reference genome coordinations.
 * the inferred fusion protein, with all exons and the transcription direction.
 * the supporting reads, with all bases colorized according to their quality scores.
 * the number of supporting reads, and how many of them are unique (the rest may be duplications)
 ## A HTML report example
-![image](http://www.opengene.org/FusionScan/eml4alk.png)  
+![image](http://www.opengene.org/GeneFuse/eml4alk.png)  
 See the HTML page of this picture: http://opengene.org/GeneFuse/report.html
