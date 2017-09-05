@@ -66,7 +66,7 @@ int main(int argc, char* argv[]){
 
     time_t t2 = time(NULL);
     printf("\n# %s\n", command.c_str());
-    printf("# fusionscan v%s, time used: %ld seconds\n", FUSIONSCAN_VER, (t2-t1));
+    printf("# genefuse v%s, time used: %ld seconds\n", FUSIONSCAN_VER, (t2-t1));
 
     loginfo("done");
 }

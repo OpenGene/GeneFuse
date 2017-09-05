@@ -36,7 +36,7 @@ void HtmlReporter::printHelper() {
     mFile << "<li> Base color indicates quality: <font color='#78C6B9'>extremely high (Q40+)</font>, <font color='#33BBE2'>high (Q30~Q39) </font>, <font color='#666666'>moderate (Q20~Q29)</font>, <font color='#E99E5B'>low (Q15~Q19)</font>, <font color='#FF0000'>extremely low (0~Q14).</font> </li>";
     mFile << "<li> Move mouse over the base, it will show the quality value</li>";
     mFile << "<li> Click on any row, the original read/pair will be displayed</li>";    
-    mFile << "<li> For pair-end sequencing, FusionScan tries to merge each pair, with overlapped assigned higher qualities </li>";
+    mFile << "<li> For pair-end sequencing, GeneFuse tries to merge each pair, with overlapped assigned higher qualities </li>";
     mFile << "</ul><p>Columns:</p><ul>";
     mFile << "<li> col1: is fusion mapped with original read? → means original read, ← means reverse complement</li>";
     mFile << "<li> col2: edit distance (ed) between read and reference sequence (left_part_ed | right_part_ed)</li>";
@@ -116,12 +116,12 @@ void HtmlReporter::printFusion(int id, FusionResult& fusion){
 
 void HtmlReporter::printHeader(){
     mFile << "<html><head><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" />";
-    mFile << "<title>FusionScan " << FUSIONSCAN_VER << ", at " << getCurrentSystemTime() << "</title>";
+    mFile << "<title>GeneFuse " << FUSIONSCAN_VER << ", at " << getCurrentSystemTime() << "</title>";
     printJS();
     printCSS();
     mFile << "</head>";
     mFile << "<body><div id='container'>";
-    mFile << "<div class='software'> FusionScan <font size='-1'>" << FUSIONSCAN_VER << "</font></div>";
+    mFile << "<div class='software'> GeneFuse <font size='-1'>" << FUSIONSCAN_VER << "</font></div>";
 }
 
 void HtmlReporter::printCSS(){
@@ -189,7 +189,7 @@ void HtmlReporter::printFooter(){
     mFile << "<div id='footer'> ";
     mFile << "<p>"<<command<<"</p>";
     printScanTargets();
-    mFile << "FusionScan " << FUSIONSCAN_VER << ", at " << getCurrentSystemTime() << " </div>";
+    mFile << "GeneFuse " << FUSIONSCAN_VER << ", at " << getCurrentSystemTime() << " </div>";
     mFile << "</div></body></html>";
 }
 
