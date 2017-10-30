@@ -48,7 +48,7 @@ void Matcher::makeIndex() {
     if(mReference == NULL)
         return ;
 
-    map<string, string> ref = mReference->mAllContigs;
+    map<string, string>& ref = mReference->mAllContigs;
 
     map<string, string>::iterator iter;
     int ctg = 0;

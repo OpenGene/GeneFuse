@@ -26,7 +26,7 @@ void Indexer::makeIndex() {
     if(mReference == NULL)
         return ;
 
-    map<string, string> ref = mReference->mAllContigs;
+    map<string, string>& ref = mReference->mAllContigs;
     for(int ctg=0; ctg<mFusions.size(); ctg++){
         Gene gene = mFusions[ctg].mGene;
         string chr = gene.mChr;
