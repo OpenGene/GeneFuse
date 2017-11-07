@@ -7,7 +7,7 @@ const int KMER = 16;
 Indexer::Indexer(string refFile, vector<Fusion>& fusions) {
     mRefFile = refFile;
     mFusions = fusions;
-    mReference = new FastaReader(refFile);
+    mReference = new FastaReader(refFile, false);
     mReference->readAll();
     mUniquePos = 0;
     mDupePos = 0;

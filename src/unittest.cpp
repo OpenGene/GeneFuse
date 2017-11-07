@@ -20,6 +20,7 @@ void UnitTest::run(){
     passed &= report(Overlap::test(), "Overlap::test");
     passed &= report(Fusion::test(), "Fusion::test");
     passed &= report(Indexer::test(), "Indexer::test");
+    passed &= report(FastaReader::test(), "FastaReader::test");
     printf("\n==========================\n");
     printf("%s\n\n", passed?"ALL PASSED":"FAILED");
 }

@@ -55,8 +55,8 @@ void Matcher::makeIndex() {
     for(iter = ref.begin(); iter!=ref.end(); iter++){
         string ctgName = iter->first;
         string s = iter->second;
-        mContigNames.push_back(ctgName);
         str2upper(s);
+        mContigNames.push_back(ctgName);
         //index forward
         indexContig(ctg, s, 0);
         //index reverse complement

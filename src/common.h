@@ -3,7 +3,7 @@
 
 #define FUSIONSCAN_VER "0.3.0"
 
-#define _DEBUG false
+#define _DEBUG true
 
 typedef long int64;
 typedef unsigned long uint64;

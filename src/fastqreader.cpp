@@ -29,6 +29,9 @@ void FastqReader::init(){
 	else if (isFastq(mFilename)){
 		mFile.open(mFilename.c_str(), ifstream::in);
 		mZipped = false;
+	} else {
+		cerr << "ERROR: the input file should be fastq (.fq, .fastq) or gzipped fastq (.fq.gz, .fastq.gz)" << endl;
+		exit(-1);
 	}
 }
 
