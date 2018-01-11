@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "util.h"
 #include <math.h>
+#include "globalsettings.h"
 
 using namespace std;
 
@@ -117,8 +118,9 @@ bool FusionResult::canBeMatched(string& s1, string& s2) {
 }
 
 bool FusionResult::isQualified() {
-    if(mUnique<2)
+    if(mUnique<GlobalSettings::uniqueRequirement){
         return false;
+    }
     if(canBeMapped())
         return false;
     if(mLeftRef.length() <= 30 || mRightRef.length()<= 30)
