@@ -108,6 +108,8 @@ bool FusionResult::canBeMatched(string& s1, string& s2) {
         int start1 = max(0, offset);
         int start2 = max(0, -offset);
         int cmplen = len - abs(offset);
+        if(start1>=s1.length() || start2>= s2.length())
+            return true;
         int ed = edit_distance(s1.substr(start1, cmplen), s2.substr(start2, cmplen));
 
         int threshold = threshold = cmplen / 10;
@@ -223,8 +225,8 @@ int FusionResult::calcED(Match* m, int shift, int& leftED, int& rightED) {
     string rightSeq = seq.substr(leftLen, rightLen);
 
     // use the sequence near the break point to adjust
-    int leftComp = min(20, min(leftLen, (int)mLeftRef.length()));
-    int rightComp = min(20, min(rightLen, (int)mRightRef.length()));
+    int leftComp = min(20, min((int)leftSeq.length(), (int)mLeftRef.length()));
+    int rightComp = min(20, min((int)rightSeq.length(), (int)mRightRef.length()));
     int leftPartED = edit_distance(leftSeq.substr(leftSeq.length() - leftComp, leftComp), mLeftRef.substr(mLeftRef.length() - leftComp, leftComp));
     int rightPartED = edit_distance(rightSeq.substr(0, rightComp), mRightRef.substr(0, rightComp));
     int totalED = leftPartED + rightPartED;
