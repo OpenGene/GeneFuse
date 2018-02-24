@@ -33,7 +33,7 @@ You should provide following arguments to run genefuse
 
 ## Example
 ```shell
-genefuse -r hg19.fasta -f genes/cancer.hg19.csv -1 R1.fq -2 R2.fq -h report.html > result
+genefuse -r hg19.fasta -f genes/drugable.hg19.csv -1 R1.fq -2 R2.fq -h report.html > result
 ```
 
 ## Reference genome
@@ -60,11 +60,18 @@ The fusion file is a list of coordinated target genes together with their exons.
 5,29606598,29606725
 ...
 ```
-The coordination system should be consistent with the reference genome.     
-Two fusion files are provided with `genefuse`:
-* `genes/cancer.hg19.csv`: all COSMIC curated fusion genes (http://cancer.sanger.ac.uk/cosmic/fusion) based on `hg19/GRch37` reference assembly.
-* `genes/cancer.hg38.csv`: all COSMIC curated fusion genes (http://cancer.sanger.ac.uk/cosmic/fusion) based on `hg38/GRch38` reference assembly.
-* These two pre-defined fusion files should be enough for most cancer related studies, since all COSMIC curated genes are included. If you want to create a custom one, please follow the instructions given on next section.
+The coordination system should be consistent with the reference genome.  
+### Fusion files provided in this package
+Four fusion files are provided with `genefuse`:
+1. `genes/drugable.hg19.csv`: all drugable fusion genes based on `hg19/GRch37` reference assembly.
+2. `genes/drugable.hg38.csv`: all drugable fusion genes based on `hg38/GRch38` reference assembly.
+3. `genes/cancer.hg19.csv`: all COSMIC curated fusion genes (http://cancer.sanger.ac.uk/cosmic/fusion) based on `hg19/GRch37` reference assembly.
+4. `genes/cancer.hg38.csv`: all COSMIC curated fusion genes (http://cancer.sanger.ac.uk/cosmic/fusion) based on `hg38/GRch38` reference assembly.
+
+Notes:
+* `genefuse` runs almost ~5X faster with `drugable` genes than `cancer` genes, since `drugable` genes are only a small subset of `cancer` genes. Use this one if you only care about the fusion related personalized medicine for cancers.
+* The `cancer` genes should be enough for most cancer related studies, since all COSMIC curated fusion genes are included.
+* If you want to create a custom gene list, please follow the instructions given on next section.
 ### Create a fusion file based on hg19 or hg38
 If you'd like to create a custom fusion file, you can use `scripts/gen_fusion_file.jl`, which is based on the Julia library `OpenGene.jl` to generate the fusion file you want.   
 You should prepare a file containing all genes you want, seperated by `space` or `line break`. Please note that `comma` is not supported. Each gene should be the HGNC standard name.  
