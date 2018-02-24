@@ -71,8 +71,9 @@ void Indexer::fillBloomFilter() {
 }
 
 void Indexer::indexContig(int ctg, string seq, int start) {
+    long kmer = -1;
     for(int i=0; i<seq.length() - KMER; ++i) {
-        long kmer = makeKmer(seq, i);
+        kmer = makeKmer(seq, i, kmer);
         //cout << kmer << "\t" << seq.substr(i, KMER) << endl;
         if(kmer < 0)
             continue;
@@ -111,8 +112,9 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
     const int step = 2;
     int seqlen = seq.length();
     // first pass, we only want to find if this seq can be partially aligned to the target
+    long kmer = -1;
     for(int i=0; i< seqlen - KMER + 1; i += step) {
-        long kmer = makeKmer(seq, i);
+        kmer = makeKmer(seq, i, kmer, step);
         if(kmer < 0)
             continue;
         long pos = kmer>>3;
@@ -171,8 +173,9 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
     memset(mask, MATCH_UNKNOWN, sizeof(unsigned char)*seqlen);
 
     // second pass, make the mask
+    kmer = -1;
     for(int i=0; i< seqlen - KMER + 1; i += 1) {
-        long kmer = makeKmer(seq, i);
+        kmer = makeKmer(seq, i, kmer);
         if(kmer < 0)
             continue;
         long pos = kmer>>3;
@@ -341,9 +344,24 @@ bool Indexer::inRequiredDirection(vector<SeqMatch>& mapping) {
     return false;
 }
 
-long Indexer::makeKmer(string & seq, int pos) {
+long Indexer::makeKmer(string & seq, int pos, long lastKmer, int step) {
+    // else calculate it completely
     long kmer = 0;
-    for(int i=0;i<KMER;i++){
+    int start = 0;
+    // re-use several bits
+    if(lastKmer >= 0) {
+        kmer = lastKmer;
+        start = KMER - step;
+        if(step == 1)
+            kmer = ((kmer & 0x3FFFFFFF) << 2);
+        else if (step == 2)
+            kmer = ((kmer & 0x0FFFFFFF) << 2);
+        else if (step == 3)
+            kmer = ((kmer & 0x03FFFFFF) << 2);
+        else if (step == 4)
+            kmer = ((kmer & 0x00FFFFFF) << 2);
+    }
+    for(int i=start;i<KMER;i++){
         switch(seq[pos+i]){
             case 'A':
                 kmer += 0;

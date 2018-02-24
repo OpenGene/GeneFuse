@@ -42,7 +42,7 @@ public:
     void printStat();
     FastaReader* getRef();
 
-    static inline long makeKmer(string & seq, int pos);
+    static inline long makeKmer(string & seq, int pos, long lastKmer, int step = 1);
     static inline long gp2long(const GenePos& gp);
     static inline GenePos shift(const GenePos& gp, int i);
     static inline GenePos long2gp(const long val);
