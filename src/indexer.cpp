@@ -61,7 +61,7 @@ void Indexer::makeIndex() {
 }
 
 void Indexer::fillBloomFilter() {
-    map<long, GenePos>::iterator iter;
+    unordered_map<long, GenePos>::iterator iter;
     for(iter = mKmerPos.begin(); iter!=mKmerPos.end(); iter++) {
         long kmer = iter->first;
         long pos = kmer>>3;
@@ -106,7 +106,7 @@ void Indexer::indexContig(int ctg, string seq, int start) {
 }
 
 vector<SeqMatch> Indexer::mapRead(Read* r) {
-    map<long, int> kmerStat;
+    unordered_map<long, int> kmerStat;
     kmerStat[0]=0;
     string seq = r->mSeq.mStr;
     const int step = 2;
@@ -120,11 +120,6 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
         long pos = kmer>>3;
         long bit = kmer & 0x07;
         if( (mBloomFilter[pos] & (0x1<<bit)) == 0) {
-            kmerStat[0]++;
-            continue;
-        }
-        // no match
-        if(mKmerPos.count(kmer) <=0 ){
             kmerStat[0]++;
             continue;
         }
@@ -151,7 +146,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
     int count1 = 0;
     long gp2 = 0;
     int count2 = 0;
-    map<long, int>::iterator iter;
+    unordered_map<long, int>::iterator iter;
     //TODO: handle small difference caused by INDEL
     for(iter = kmerStat.begin(); iter!=kmerStat.end(); iter++){
         if(iter->first != 0 && iter->second > count1){
@@ -181,8 +176,6 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
         long pos = kmer>>3;
         long bit = kmer & 0x07;
         if( (mBloomFilter[pos] & (0x1<<bit)) == 0)
-            continue;
-        if(mKmerPos.count(kmer) <=0)
             continue;
         GenePos gp = mKmerPos[kmer];
         // is a dupe

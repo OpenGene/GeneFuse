@@ -10,6 +10,7 @@
 #include <fstream>
 #include "fusion.h"
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <cctype>
 #include "common.h"
@@ -63,7 +64,7 @@ private:
     void fillBloomFilter();
 
 public:
-    map<long, GenePos> mKmerPos;
+    unordered_map<long, GenePos> mKmerPos;
     unsigned char* mBloomFilter;
     vector<vector<GenePos>> mDupeList;
     vector<string> mFusionSeq;

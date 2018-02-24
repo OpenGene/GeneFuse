@@ -11,15 +11,10 @@
 #include "read.h"
 #include "fastareader.h"
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <cctype>
 #include "common.h"
-#ifdef _WINDOWS
-    #include <hash_map>
-#else
-    #include <ext/hash_map>
-    #define hash_map __gnu_cxx::hash_map
-#endif
 
 using namespace std;
 
@@ -63,7 +58,7 @@ private:
     bool isConsistent(long thisgp, unsigned int kmer, int seqpos, int threshold);
 
 public:
-    map<unsigned int, vector<GenePos>> mKmerPositions;
+    unordered_map<unsigned int, vector<GenePos>> mKmerPositions;
     vector<string> mContigNames;
 
 

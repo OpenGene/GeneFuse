@@ -129,7 +129,7 @@ MatchResult* Matcher::match(Sequence& sequence) {
 }
 
 MatchResult* Matcher::mapToIndex(Sequence& sequence) {
-    hash_map<long, int> kmerStat;
+    unordered_map<long, int> kmerStat;
     kmerStat[0]=0;
     string seq = sequence.mStr;
     const int step = 1;
@@ -177,7 +177,7 @@ MatchResult* Matcher::mapToIndex(Sequence& sequence) {
     const int TOP = 5;
     long topgp[TOP] ={0};
     int topcount[TOP] = {0};
-    hash_map<long, int>::iterator iter;
+    unordered_map<long, int>::iterator iter;
     for(iter = kmerStat.begin(); iter!=kmerStat.end(); iter++){
         long gp = iter->first;
         int count = iter->second;
