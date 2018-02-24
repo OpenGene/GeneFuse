@@ -60,9 +60,11 @@ public:
 private:
     void makeMask(unsigned char* mask, unsigned char flag, int seqlen, int start, int kmerSize);
     vector<SeqMatch> segmentMask(unsigned char* mask, int seqlen, GenePos gp1, GenePos gp2);
+    void fillBloomFilter();
 
 public:
     map<long, GenePos> mKmerPos;
+    unsigned char* mBloomFilter;
     vector<vector<GenePos>> mDupeList;
     vector<string> mFusionSeq;
 

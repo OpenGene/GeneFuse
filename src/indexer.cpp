@@ -3,6 +3,9 @@
 #include <memory.h>
 
 const int KMER = 16;
+// 512M bloom filter
+const unsigned int BLOOM_FILTER_SIZE = 1<<29;
+const unsigned int BLOOM_FILTER_BITS = BLOOM_FILTER_SIZE - 1;
 
 Indexer::Indexer(string refFile, vector<Fusion>& fusions) {
     mRefFile = refFile;
@@ -11,11 +14,15 @@ Indexer::Indexer(string refFile, vector<Fusion>& fusions) {
     mReference->readAll();
     mUniquePos = 0;
     mDupePos = 0;
+    mBloomFilter = new unsigned char[BLOOM_FILTER_SIZE];
+    memset(mBloomFilter, 0, sizeof(unsigned char) * BLOOM_FILTER_SIZE);
 }
 
 Indexer::~Indexer() {
     delete mReference;
     mReference = NULL;
+    delete mBloomFilter;
+    mBloomFilter = NULL;
 }
 
 FastaReader* Indexer::getRef() {
@@ -49,7 +56,18 @@ void Indexer::makeIndex() {
         Sequence seq = ~(Sequence(s));
         indexContig(ctg, seq.mStr, -s.length()+1);
     }
+    fillBloomFilter();
     loginfo("mapper indexing done");
+}
+
+void Indexer::fillBloomFilter() {
+    map<long, GenePos>::iterator iter;
+    for(iter = mKmerPos.begin(); iter!=mKmerPos.end(); iter++) {
+        long kmer = iter->first;
+        long pos = kmer>>3;
+        long bit = kmer & 0x07;
+        mBloomFilter[pos] |= (0x1<<bit);
+    }
 }
 
 void Indexer::indexContig(int ctg, string seq, int start) {
@@ -90,13 +108,19 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
     map<long, int> kmerStat;
     kmerStat[0]=0;
     string seq = r->mSeq.mStr;
-    const int step = 1;
+    const int step = 2;
     int seqlen = seq.length();
     // first pass, we only want to find if this seq can be partially aligned to the target
     for(int i=0; i< seqlen - KMER + 1; i += step) {
         long kmer = makeKmer(seq, i);
         if(kmer < 0)
             continue;
+        long pos = kmer>>3;
+        long bit = kmer & 0x07;
+        if( (mBloomFilter[pos] & (0x1<<bit)) == 0) {
+            kmerStat[0]++;
+            continue;
+        }
         // no match
         if(mKmerPos.count(kmer) <=0 ){
             kmerStat[0]++;
@@ -138,7 +162,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
             count2 = iter->second;
         }  
     }
-    if(count1 < 40 || count2 < 20){
+    if(count1 * step < 40 || count2 * step < 20){
         // return an null list
         return vector<SeqMatch>();
     }
@@ -147,9 +171,15 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
     memset(mask, MATCH_UNKNOWN, sizeof(unsigned char)*seqlen);
 
     // second pass, make the mask
-    for(int i=0; i< seqlen - KMER + 1; i += step) {
+    for(int i=0; i< seqlen - KMER + 1; i += 1) {
         long kmer = makeKmer(seq, i);
-        if(kmer < 0 || mKmerPos.count(kmer) <=0)
+        if(kmer < 0)
+            continue;
+        long pos = kmer>>3;
+        long bit = kmer & 0x07;
+        if( (mBloomFilter[pos] & (0x1<<bit)) == 0)
+            continue;
+        if(mKmerPos.count(kmer) <=0)
             continue;
         GenePos gp = mKmerPos[kmer];
         // is a dupe
