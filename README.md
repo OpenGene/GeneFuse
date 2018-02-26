@@ -5,7 +5,8 @@ Gene fusion detection and visualization
 * Sample report: http://opengene.org/GeneFuse/report.html
 
 # Get genefuse program
-## download binary (only for Linux systems, http://opengene.org/GeneFuse/genefuse)
+## download binary
+This binary is only for Linux systems, http://opengene.org/GeneFuse/genefuse
 ```shell
 # this binary was compiled on CentOS, and tested on CentOS/Ubuntu
 wget http://opengene.org/GeneFuse/genefuse
