@@ -4,23 +4,24 @@ Gene fusion detection and visualization
 # Take a quick glance of the informative report
 * Sample report: http://opengene.org/GeneFuse/report.html
 
-# Download
-Get latest (may be not stable)
+# Get genefuse program
+## download binary (only for Linux systems, http://opengene.org/GeneFuse/genefuse)
 ```shell
-# download use http
-https://github.com/OpenGene/GeneFuse/archive/master.zip
-
-# or download use git
-git clone https://github.com/OpenGene/GeneFuse.git
+# this binary was compiled on CentOS, and tested on CentOS/Ubuntu
+wget http://opengene.org/GeneFuse/genefuse
+chmod a+x ./genefuse
 ```
-Get the stable releases  
-https://github.com/OpenGene/GeneFuse/releases/latest
-
-# Build
-GeneFuse only depends on `libz`, which is always available on Linux or Mac systems. If your system has no `libz`, install it first.
+## or compile from source
 ```shell
-cd GeneFuse
+# get source (you can also use browser to download from master or releases)
+git clone https://github.com/OpenGene/genefuse.git
+
+# build
+cd genefuse
 make
+
+# Install
+sudo make install
 ```
 
 # Usage
