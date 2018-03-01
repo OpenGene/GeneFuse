@@ -35,7 +35,7 @@ You should provide following arguments to run genefuse
 
 ## Example
 ```shell
-genefuse -r hg19.fasta -f genes/drugable.hg19.csv -1 R1.fq -2 R2.fq -h report.html > result
+genefuse -r hg19.fasta -f genes/druggable.hg19.csv -1 R1.fq -2 R2.fq -h report.html > result
 ```
 
 ## Reference genome
@@ -65,13 +65,13 @@ The fusion file is a list of coordinated target genes together with their exons.
 The coordination system should be consistent with the reference genome.  
 ### Fusion files provided in this package
 Four fusion files are provided with `genefuse`:
-1. `genes/drugable.hg19.csv`: all drugable fusion genes based on `hg19/GRch37` reference assembly.
-2. `genes/drugable.hg38.csv`: all drugable fusion genes based on `hg38/GRch38` reference assembly.
+1. `genes/druggable.hg19.csv`: all druggable fusion genes based on `hg19/GRch37` reference assembly.
+2. `genes/druggable.hg38.csv`: all druggable fusion genes based on `hg38/GRch38` reference assembly.
 3. `genes/cancer.hg19.csv`: all COSMIC curated fusion genes (http://cancer.sanger.ac.uk/cosmic/fusion) based on `hg19/GRch37` reference assembly.
 4. `genes/cancer.hg38.csv`: all COSMIC curated fusion genes (http://cancer.sanger.ac.uk/cosmic/fusion) based on `hg38/GRch38` reference assembly.
 
 Notes:
-* `genefuse` runs almost ~5X faster with `drugable` genes than `cancer` genes, since `drugable` genes are only a small subset of `cancer` genes. Use this one if you only care about the fusion related personalized medicine for cancers.
+* `genefuse` runs almost ~5X faster with `druggable` genes than `cancer` genes, since `druggable` genes are only a small subset of `cancer` genes. Use this one if you only care about the fusion related personalized medicine for cancers.
 * The `cancer` genes should be enough for most cancer related studies, since all COSMIC curated fusion genes are included.
 * If you want to create a custom gene list, please follow the instructions given on next section.
 ### Create a fusion file based on hg19 or hg38
