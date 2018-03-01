@@ -3,6 +3,7 @@ Gene fusion detection and visualization
 
 # Take a quick glance of the informative report
 * Sample report: http://opengene.org/GeneFuse/report.html
+* Dataset for testing: http://opengene.org/dataset.html
 
 # Get genefuse program
 ## download binary
