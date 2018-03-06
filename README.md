@@ -36,7 +36,7 @@ You should provide following arguments to run genefuse
 
 ## Example
 ```shell
-genefuse -r hg19.fasta -f genes/druggable.hg19.csv -1 R1.fq -2 R2.fq -h report.html > result
+genefuse -r hg19.fasta -f genes/druggable.hg19.csv -1 R1.fq.gz -2 R2.fq.gz -h report.html > result
 ```
 
 ## Reference genome
