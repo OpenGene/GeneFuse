@@ -59,8 +59,12 @@ void FastaReader::readNext()
         if(c == '>' || mFastaFileStream.eof())
             break;
         else {
-            if (foundHeader)
+            if (foundHeader){
+                if(mForceUpperCase && c>='a' && c<='z') {
+                    c -= ('a' - 'A');
+                }
                 ssSeq << c;
+            }
             else
                 ssHeader << c;
         }
