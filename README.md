@@ -33,6 +33,7 @@ You should provide following arguments to run genefuse
 * the fusion setting file, specified by `-f` or `--fusion=`
 * the fastq file(s), specified by `-1` or `--read1=` for single-end data. If dealing with pair-end data, specify the read2 file by `-2` or `--read2=`
 * use `-h` or `--html=` to specify the file name of HTML report
+* use `-j` or `--json=` to specify the file name of JSON report
 * the plain text result is directly printed to STDOUT, you can pipe it to a file using a `>`
 
 ## Example
@@ -111,3 +112,8 @@ options:
   -t, --thread      worker thread number, default is 4 (int [=4])
   -?, --help        print this message
 ```
+
+# Cite GeneFuse
+If you used GeneFuse in you work, you can cite it as: 
+
+Shifu Chen, Ming Liu, Tanxiao Huang, Wenting Liao, Mingyan Xu and Jia Gu. GeneFuse: detection and visualization of target gene fusions from DNA sequencing data. International Journal of Biological Sciences, 2018; 14(8): 843-848. doi: 10.7150/ijbs.24626
