@@ -38,11 +38,12 @@ typedef struct ReadPairRepository ReadPairRepository;
 
 class PairEndScanner{
 public:
-    PairEndScanner(string fusionFile, string refFile, string read1File, string read2File, string html="", int threadnum=1);
+    PairEndScanner(string fusionFile, string refFile, string read1File, string read2File, string html, string json, int threadnum);
     ~PairEndScanner();
     bool scan();
     void textReport();
     void htmlReport();
+    void jsonReport();
 
 private:
     bool scanPairEnd(ReadPairPack* pack);
@@ -60,6 +61,7 @@ private:
     string mRead1File;
     string mRead2File;
     string mHtmlFile;
+    string mJsonFile;
     ReadPairRepository mRepo;
     bool mProduceFinished;
     std::mutex mFusionMtx;

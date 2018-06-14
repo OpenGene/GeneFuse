@@ -7,12 +7,14 @@
 #include <thread>
 #include <memory.h>
 #include "util.h"
+#include "jsonreporter.h"
 
-SingleEndScanner::SingleEndScanner(string fusionFile, string refFile, string read1File, string html, int threadNum){
+SingleEndScanner::SingleEndScanner(string fusionFile, string refFile, string read1File, string html, string json, int threadNum){
     mRead1File = read1File;
     mFusionFile = fusionFile;
     mRefFile = refFile;
     mHtmlFile = html;
+    mJsonFile = json;
     mProduceFinished = false;
     mThreadNum = threadNum;
     mFusionMapper = NULL;
@@ -51,8 +53,8 @@ bool SingleEndScanner::scan(){
     mFusionMapper->sortMatches();
     mFusionMapper->clusterMatches();
 
-    textReport();
     htmlReport();
+    jsonReport();
 
     mFusionMapper->freeMatches();
 
@@ -222,5 +224,13 @@ void SingleEndScanner::htmlReport() {
         return;
 
     HtmlReporter reporter(mHtmlFile, mFusionMapper);
+    reporter.run();
+}
+
+void SingleEndScanner::jsonReport() {
+    if(mJsonFile == "")
+        return;
+
+    JsonReporter reporter(mJsonFile, mFusionMapper);
     reporter.run();
 }

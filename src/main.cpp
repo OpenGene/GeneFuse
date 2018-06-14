@@ -23,13 +23,15 @@ int main(int argc, char* argv[]){
     cmd.add<string>("ref", 'r', "reference fasta file name", true, "");
     cmd.add<int>("unique", 'u', "specify the least supporting read number is required to report a fusion, default is 2", false, 2);
     cmd.add<int>("deletion", 'd', "specify the least deletion length of a intra-gene deletion to report, default is 50", false, 50);
-    cmd.add<string>("html", 'h', "file name to store html report, default is genefuse.html", false, "genefuse.html");
+    cmd.add<string>("html", 'h', "file name to store HTML report, default is genefuse.html", false, "genefuse.html");
+    cmd.add<string>("json", 'j', "file name to store JSON report, default is genefuse.json", false, "genefuse.json");
     cmd.add<int>("thread", 't', "worker thread number, default is 4", false, 4);
     cmd.parse_check(argc, argv);
     string r1file = cmd.get<string>("read1");
     string r2file = cmd.get<string>("read2");
     string fusionFile = cmd.get<string>("fusion");
     string html = cmd.get<string>("html");
+    string json = cmd.get<string>("json");
     string refFile = cmd.get<string>("ref");
     int threadNum = cmd.get<int>("thread");
     int unique = cmd.get<int>("unique");
@@ -61,7 +63,7 @@ int main(int argc, char* argv[]){
 
     time_t t1 = time(NULL);
 
-    FusionScan fs(fusionFile, refFile, r1file, r2file, html, threadNum);
+    FusionScan fs(fusionFile, refFile, r1file, r2file, html, json, threadNum);
     fs.scan();
 
     time_t t2 = time(NULL);

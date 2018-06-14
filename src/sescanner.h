@@ -38,11 +38,12 @@ typedef struct ReadRepository ReadRepository;
 
 class SingleEndScanner{
 public:
-    SingleEndScanner(string fusionFile, string refFile, string read1File, string html="", int threadnum=1);
+    SingleEndScanner(string fusionFile, string refFile, string read1File, string html, string json, int threadnum);
     ~SingleEndScanner();
     bool scan();
     void textReport();
     void htmlReport();
+    void jsonReport();
 
 private:
     bool scanSingleEnd(ReadPack* pack);
@@ -60,6 +61,7 @@ private:
     string mRead1File;
     string mRead2File;
     string mHtmlFile;
+    string mJsonFile;
     ReadRepository mRepo;
     bool mProduceFinished;
     std::mutex mFusionMtx;

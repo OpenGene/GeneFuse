@@ -7,13 +7,15 @@
 #include <thread>
 #include <memory.h>
 #include "util.h"
+#include "jsonreporter.h"
 
-PairEndScanner::PairEndScanner(string fusionFile, string refFile, string read1File, string read2File, string html, int threadNum){
+PairEndScanner::PairEndScanner(string fusionFile, string refFile, string read1File, string read2File, string html, string json, int threadNum){
     mRead1File = read1File;
     mRead2File = read2File;
     mFusionFile = fusionFile;
     mRefFile = refFile;
     mHtmlFile = html;
+    mJsonFile = json;
     mProduceFinished = false;
     mThreadNum = threadNum;
     mFusionMapper = NULL;
@@ -53,6 +55,7 @@ bool PairEndScanner::scan(){
     mFusionMapper->clusterMatches();
 
     htmlReport();
+    jsonReport();
 
     mFusionMapper->freeMatches();
     return true;
@@ -264,5 +267,13 @@ void PairEndScanner::htmlReport() {
         return;
 
     HtmlReporter reporter(mHtmlFile, mFusionMapper);
+    reporter.run();
+}
+
+void PairEndScanner::jsonReport() {
+    if(mJsonFile == "")
+        return;
+
+    JsonReporter reporter(mJsonFile, mFusionMapper);
     reporter.run();
 }

@@ -12,7 +12,7 @@ using namespace std;
 
 class FusionScan{
 public:
-    FusionScan(string fusionFile, string refFile, string read1File, string read2File, string html, int threadNum);
+    FusionScan(string fusionFile, string refFile, string read1File, string read2File, string html, string json, int threadNum);
     bool scan();
 
 private:
@@ -20,6 +20,7 @@ private:
     string mRead1File;
     string mRead2File;
     string mHtmlFile;
+    string mJsonFile;
     string mRefFile;
     int mThreadNum;
 };

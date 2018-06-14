@@ -26,6 +26,7 @@ public:
     Match(Read* r, int readBreak, GenePos leftGP, GenePos rightGP, int gap, bool reversed = false);
     ~Match();
     void print();
+    void printReadToJson(ofstream& file, string pad);
     void printHtmlTD(ofstream& file);
     void printReadsToFile(ofstream& file);
     void setReversed(bool flag);
