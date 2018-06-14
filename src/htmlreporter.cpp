@@ -1,6 +1,7 @@
 #include "htmlreporter.h"
 #include "common.h"
 #include <chrono>
+#include "globalsettings.h"
 
 const std::string getCurrentSystemTime()
 {
@@ -62,8 +63,15 @@ void HtmlReporter::printFusions() {
     mFile<<"</ul></div>";
     id=0;
     for(int i=0;i<mFusionResults.size();i++){
+        FusionResult fusion = mFusionResults[i];
+        if(!GlobalSettings::outputDeletions && fusion.isDeletion())
+            continue;
+        if(fusion.isLeftProteinForward() != fusion.isRightProteinForward()) {
+            if(!GlobalSettings::outputUntranslated)
+                continue;
+        }
         id++;
-        printFusion(id, mFusionResults[i]);
+        printFusion(id, fusion);
     }
 }
 

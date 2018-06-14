@@ -22,10 +22,12 @@ int main(int argc, char* argv[]){
     cmd.add<string>("fusion", 'f', "fusion file name, in CSV format", true, "");
     cmd.add<string>("ref", 'r', "reference fasta file name", true, "");
     cmd.add<int>("unique", 'u', "specify the least supporting read number is required to report a fusion, default is 2", false, 2);
-    cmd.add<int>("deletion", 'd', "specify the least deletion length of a intra-gene deletion to report, default is 50", false, 50);
     cmd.add<string>("html", 'h', "file name to store HTML report, default is genefuse.html", false, "genefuse.html");
     cmd.add<string>("json", 'j', "file name to store JSON report, default is genefuse.json", false, "genefuse.json");
     cmd.add<int>("thread", 't', "worker thread number, default is 4", false, 4);
+    cmd.add<int>("deletion", 'd', "specify the least deletion length of a intra-gene deletion to report, default is 50", false, 50);
+    cmd.add("output_deletions", 'D', "long deletions are not output by default, enable this option to output them");
+    cmd.add("output_untranslated_fusions", 'U', "the fusions that cannot be transcribed or translated are not output by default, enable this option to output them");
     cmd.parse_check(argc, argv);
     string r1file = cmd.get<string>("read1");
     string r2file = cmd.get<string>("read2");
@@ -36,9 +38,13 @@ int main(int argc, char* argv[]){
     int threadNum = cmd.get<int>("thread");
     int unique = cmd.get<int>("unique");
     int deletion = cmd.get<int>("deletion");
+    bool outputDeletion = cmd.exist("output_deletions");
+    bool outputUntranslated = cmd.exist("output_untranslated_fusions");
 
     GlobalSettings::setUniqueRequirement(unique);
     GlobalSettings::setDeletionThreshold(deletion);
+    GlobalSettings::setOutputDeletions(outputDeletion);
+    GlobalSettings::setOutputUntranslated(outputUntranslated);
 
 
     if(ends_with(refFile, ".gz") || ends_with(refFile, ".gz")) {

@@ -21,11 +21,19 @@ public:
     inline static void setDeletionThreshold(int val){
         deletionThreshold = val;
     }
+    inline static void setOutputDeletions(bool flag){
+        outputDeletions = flag;
+    }
+    inline static void setOutputUntranslated(bool flag){
+        outputUntranslated = flag;
+    }
 
 public:
     static bool markedOnlyForVCF;
     static int uniqueRequirement;
     static int deletionThreshold;
+    static bool outputDeletions;
+    static bool outputUntranslated;
 };
 
 

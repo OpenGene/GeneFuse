@@ -28,6 +28,12 @@ void JsonReporter::run() {
     for(int i=0;i<mFusionResults.size();i++){
         FusionResult fusion = mFusionResults[i];
         vector<Match*> matches = fusion.mMatches;
+        if(!GlobalSettings::outputDeletions && fusion.isDeletion())
+            continue;
+        if(fusion.isLeftProteinForward() != fusion.isRightProteinForward()) {
+            if(!GlobalSettings::outputUntranslated)
+                continue;
+        }
         
         if(isFirstMut) {
             mFile << endl;

@@ -303,6 +303,12 @@ void FusionMapper::clusterMatches() {
             frs[f].calcUnique();
             frs[f].updateInfo(fusionList);
             if(frs[f].isQualified()) {
+                if(!GlobalSettings::outputDeletions && frs[f].isDeletion())
+                    continue;
+                if(frs[f].isLeftProteinForward() != frs[f].isRightProteinForward()) {
+                    if(!GlobalSettings::outputUntranslated)
+                        continue;
+                }
                 frs[f].print(fusionList);
                 mFusionResults.push_back(frs[f]);
             }
