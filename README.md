@@ -1,8 +1,9 @@
 # GeneFuse
-Gene fusion detection and visualization
+A tool to detect and visualize target gene fusions by scanning FASTQ files directly. This tool accepts FASTQ files and reference genome as input, and outputs detected fusion results in TEXT, JSON and HTML formats.
 
 # Take a quick glance of the informative report
-* Sample report: http://opengene.org/GeneFuse/report.html
+* Sample HTML report: http://opengene.org/GeneFuse/report.html
+* Sample JSON report: http://opengene.org/GeneFuse/report.json
 * Dataset for testing: http://opengene.org/dataset.html
 
 # Get genefuse program
@@ -95,3 +96,18 @@ GeneFuse can generate very informative and interactive HTML pages to visualize t
 ## A HTML report example
 ![image](http://www.opengene.org/GeneFuse/eml4alk.png)  
 See the HTML page of this picture: http://opengene.org/GeneFuse/report.html
+
+# All options
+```
+options:
+  -1, --read1       read1 file name (string)
+  -2, --read2       read2 file name (string [=])
+  -f, --fusion      fusion file name, in CSV format (string)
+  -r, --ref         reference fasta file name (string)
+  -u, --unique      specify the least supporting read number is required to report a fusion, default is 2 (int [=2])
+  -d, --deletion    specify the least deletion length of a intra-gene deletion to report, default is 50 (int [=50])
+  -h, --html        file name to store HTML report, default is genefuse.html (string [=genefuse.html])
+  -j, --json        file name to store JSON report, default is genefuse.json (string [=genefuse.json])
+  -t, --thread      worker thread number, default is 4 (int [=4])
+  -?, --help        print this message
+```
