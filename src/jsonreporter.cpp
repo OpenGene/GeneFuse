@@ -22,7 +22,7 @@ void JsonReporter::run() {
     mFile << "\t\"command\":\"" << command << "\"," << endl;
     mFile << "\t\"version\":\"" << FUSIONSCAN_VER << "\"," << endl;
     mFile << "\t\"time\":\"" << getCurrentSystemTime() << "\"," << endl;
-    mFile << "\t\"mutations\":{";
+    mFile << "\t\"fusions\":{";
 
     bool isFirstMut = true;
     for(int i=0;i<mFusionResults.size();i++){
