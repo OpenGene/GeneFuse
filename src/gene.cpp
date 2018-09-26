@@ -86,6 +86,13 @@ Gene Gene::parse(string linestr) {
 
 }
 
+int Gene::genePos2ChrPos(int genepos) {
+    int chrpos = abs(genepos) + mStart;
+    if(genepos <0)
+        chrpos *= -1;
+    return chrpos;
+}
+
 string Gene::pos2str(int pos) {
     int pp = abs(pos) + mStart;
     stringstream ss;

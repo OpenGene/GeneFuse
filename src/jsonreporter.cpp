@@ -46,7 +46,7 @@ void JsonReporter::run() {
             mFile << "\t\t\t\"" <<  "left" << "\":{" << endl;
                 mFile << "\t\t\t\t\"" <<  "gene_name" << "\":" << "\"" << fusion.mLeftGene.mName << "\"," << endl;
                 mFile << "\t\t\t\t\"" <<  "gene_chr" << "\":" << "\"" << fusion.mLeftGene.mChr << "\"," << endl;
-                mFile << "\t\t\t\t\"" <<  "position" << "\":" << fusion.mLeftGP.position << "," << endl;
+                mFile << "\t\t\t\t\"" <<  "position" << "\":" <<  fusion.mLeftGene.genePos2ChrPos(fusion.mLeftGP.position) << "," << endl;
                 mFile << "\t\t\t\t\"" <<  "reference" << "\":" << "\"" << fusion.mLeftRef << "\"," << endl;
                 mFile << "\t\t\t\t\"" <<  "ref_ext" << "\":" << "\"" << fusion.mLeftRefExt << "\"," << endl;
                 mFile << "\t\t\t\t\"" <<  "pos_str" << "\":" << "\"" << fusion.mLeftPos << "\"," << endl;
@@ -57,7 +57,7 @@ void JsonReporter::run() {
             mFile << "\t\t\t\"" <<  "right" << "\":{" << endl;
                 mFile << "\t\t\t\t\"" <<  "gene_name" << "\":" << "\"" << fusion.mRightGene.mName << "\"," << endl;
                 mFile << "\t\t\t\t\"" <<  "gene_chr" << "\":" << "\"" << fusion.mRightGene.mChr << "\"," << endl;
-                mFile << "\t\t\t\t\"" <<  "position" << "\":" << fusion.mRightGP.position << "," << endl;
+                mFile << "\t\t\t\t\"" <<  "position" << "\":" << fusion.mRightGene.genePos2ChrPos(fusion.mRightGP.position) << "," << endl;
                 mFile << "\t\t\t\t\"" <<  "reference" << "\":" << "\"" << fusion.mRightRef << "\"," << endl;
                 mFile << "\t\t\t\t\"" <<  "ref_ext" << "\":" << "\"" << fusion.mRightRefExt << "\"," << endl;
                 mFile << "\t\t\t\t\"" <<  "pos_str" << "\":" << "\"" << fusion.mRightPos << "\"," << endl;

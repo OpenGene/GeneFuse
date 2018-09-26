@@ -31,6 +31,7 @@ public:
     void print();
     static Gene parse(string linestr);
     string pos2str(int pos);
+    int genePos2ChrPos(int genepos);
     void getExonIntron(int pos, bool& isExon, int& number);
 
 public:
