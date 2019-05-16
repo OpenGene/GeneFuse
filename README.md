@@ -4,7 +4,7 @@ A tool to detect and visualize target gene fusions by scanning FASTQ files direc
 # Take a quick glance of the informative report
 * Sample HTML report: http://opengene.org/GeneFuse/report.html
 * Sample JSON report: http://opengene.org/GeneFuse/report.json
-* Dataset for testing: http://opengene.org/dataset.html
+* Dataset for testing: http://opengene.org/dataset.html  Please download the paired-end FASTQ files for GeneFuse testing (Illumina platform)
 
 # Get genefuse program
 ## download binary
