@@ -1,3 +1,5 @@
+[![install with conda](
+https://anaconda.org/bioconda/genefuse/badges/version.svg)](https://anaconda.org/bioconda/genefuse)
 # GeneFuse
 A tool to detect and visualize target gene fusions by scanning FASTQ files directly. This tool accepts FASTQ files and reference genome as input, and outputs detected fusion results in TEXT, JSON and HTML formats.
 
@@ -7,6 +9,12 @@ A tool to detect and visualize target gene fusions by scanning FASTQ files direc
 * Dataset for testing: http://opengene.org/dataset.html  Please download the paired-end FASTQ files for GeneFuse testing (Illumina platform)
 
 # Get genefuse program
+## install with Bioconda
+[![install with conda](
+https://anaconda.org/bioconda/genefuse/badges/version.svg)](https://anaconda.org/bioconda/genefuse)
+```shell
+conda install -c bioconda genefuse
+```
 ## download binary
 This binary is only for Linux systems, http://opengene.org/GeneFuse/genefuse
 ```shell
