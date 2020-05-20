@@ -86,14 +86,24 @@ Notes:
 * The `cancer` genes should be enough for most cancer related studies, since all COSMIC curated fusion genes are included.
 * If you want to create a custom gene list, please follow the instructions given on next section.
 ### Create a fusion file based on hg19 or hg38
-If you'd like to create a custom fusion file, you can use `scripts/gen_fusion_file.jl`, which is based on the Julia library `OpenGene.jl` to generate the fusion file you want.   
-You should prepare a file containing all genes you want, seperated by `space` or `line break`. Please note that `comma` is not supported. Each gene should be the HGNC standard name.  
-By default, the primary transcript (named as GENE_001) will be used. But you can specify the transcript by add `_TranscriptId` to the gene. For example: use `CD74_ENST00000009530` to specify the transcript of `CD74`.   
-When the gene list file (`genes.txt`) is prepared, you can used following command to generate a fusion file (`fusion.csv`):
-```shell
-julia scripts/gen_fusion_file.jl -r hg19 -g genes.txt -f fusion.csv
+If you'd like to create a custom fusion file, you can use `scripts/make_fusion_genes.py`   
+As the script uses `refFlat.txt` file to determine genomic coordinates of exons, you need to download a `refFlat.txt` file from UCSC Genome Browser in advance. Of course, the choice of using either hg19 or hg38 is up to you.
+
+As for the input gene list file, all genes should be listed in separate lines.  By default, the longest transcript will be used. However, you can specify a different transcript by adding the transcript ID to the end of a gene. The gene and its transcript should be separated by a tab or a space. Please note that each gene should be the HGNC official gene symbol, and each transcript should be NCBI RefSeq transcript ID. 
+
+An example of gene list file:
+
 ```
-The reference genome is specified by `-r` option, which can be hg19/GRch37/GRch38.
+BRCA2	NM_000059
+FAM155A
+IRS2
+```
+
+When both input gene list file (`gene_list.txt`) and `refFlat.txt` file are prepared, you can use following command to generate a user-defined fusion file (`fusion.csv`):
+
+```shell
+python3 scripts/make_fusion_genes.py gene_list.txt -r /path/to/refflat -o fusion.csv
+```
 
 # HTML report
 GeneFuse can generate very informative and interactive HTML pages to visualize the fusions with following information:
