@@ -89,6 +89,11 @@ Notes:
 If you'd like to create a custom fusion file, you can use `scripts/make_fusion_genes.py`   
 As the script uses `refFlat.txt` file to determine genomic coordinates of exons, you need to download a `refFlat.txt` file from UCSC Genome Browser in advance. Of course, the choice of using either hg19 or hg38 is up to you.
 
+- For hg19: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/refFlat.txt.gz
+- For hg38: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/refFlat.txt.gz
+
+Please make sure unzip the file to txt format before you continue
+
 As for the input gene list file, all genes should be listed in separate lines.  By default, the longest transcript will be used. However, you can specify a different transcript by adding the transcript ID to the end of a gene. The gene and its transcript should be separated by a tab or a space. Please note that each gene should be the HGNC official gene symbol, and each transcript should be NCBI RefSeq transcript ID. 
 
 An example of gene list file:
