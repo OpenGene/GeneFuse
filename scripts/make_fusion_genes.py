@@ -28,9 +28,9 @@ def make_fusion_gene(gene, fw, refflat):
         transcripts = {}
         with open(refflat, "r") as fh:
             for line in fh:
-                if gene[0] not in line:
+                cur_gene, transcript, chrom, strand, start, end, _, _, _, exonstart, exonend = line.rstrip("\n").split("\t")
+                if gene[0] != cur_gene:
                     continue
-                _, transcript, chrom, strand, start, end, _, _, _, exonstart, exonend = line.rstrip("\n").split("\t")
                 transcripts[transcript] = (chrom, start, end, exonstart, exonend)
         transcript = get_longest_transcript(transcripts.keys(), refflat)
         chrom, start, end, exonstart, exonend  = transcripts[transcript]
@@ -39,9 +39,9 @@ def make_fusion_gene(gene, fw, refflat):
     elif len(gene) == 2:
         with open(refflat, "r") as fh:
             for line in fh:
-                if gene[1] not in line:
-                    continue
                 _, transcript, chrom, strand, start, end, _, _, _, exonstart, exonend = line.rstrip("\n").split("\t")
+                if gene[1] != transcript:
+                    continue
                 break
     
     # write to a file
