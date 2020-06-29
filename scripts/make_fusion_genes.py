@@ -31,18 +31,21 @@ def make_fusion_gene(gene, fw, refflat):
                 cur_gene, transcript, chrom, strand, start, end, _, _, _, exonstart, exonend = line.rstrip("\n").split("\t")
                 if gene[0] != cur_gene:
                     continue
-                transcripts[transcript] = (chrom, start, end, exonstart, exonend)
+                transcripts[transcript] = (chrom, strand, start, end, exonstart, exonend)
+        if transcripts == {}:
+            raise ValueError(f'This gene symbol cannot be found in refFlat.txt: {gene[0]}')
         transcript = get_longest_transcript(transcripts.keys(), refflat)
-        chrom, start, end, exonstart, exonend  = transcripts[transcript]
+        chrom, strand, start, end, exonstart, exonend  = transcripts[transcript]
 
     # use user-specified transcript
     elif len(gene) == 2:
         with open(refflat, "r") as fh:
             for line in fh:
-                _, transcript, chrom, strand, start, end, _, _, _, exonstart, exonend = line.rstrip("\n").split("\t")
-                if gene[1] != transcript:
-                    continue
-                break
+                cur_gene, transcript, chrom, strand, start, end, _, _, _, exonstart, exonend = line.rstrip("\n").split("\t")
+                if gene[0] == cur_gene and gene[1] == transcript:
+                    break
+            else:
+                raise ValueError(f'Wrong gene symobol or transcript maybe provided: {gene[0]}, {gene[1]}')
     
     # write to a file
     header = f">{gene[0]}_{transcript},{chrom}:{start}-{end}\n"
