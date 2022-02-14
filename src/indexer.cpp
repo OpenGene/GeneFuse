@@ -106,7 +106,7 @@ void Indexer::indexContig(int ctg, string seq, int start) {
 }
 
 vector<SeqMatch> Indexer::mapRead(Read* r) {
-    map<long, int> kmerStat;
+    unordered_map<long, int> kmerStat;
     kmerStat[0]=0;
     string seq = r->mSeq.mStr;
     const int step = 2;
@@ -126,6 +126,9 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
         GenePos gp = mKmerPos[kmer];
         // is a dupe
         if(gp.contig < 0) {
+            // too much keys in this dupe, then skip it
+            if(mDupeList[gp.position].size() > 10)
+                continue;
             for(int g=0; g<mDupeList[gp.position].size();g++) {
                 long gplong = gp2long(shift(mDupeList[gp.position][g], i));
                 if(kmerStat.count(gplong)==0)
@@ -146,7 +149,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
     int count1 = 0;
     long gp2 = 0;
     int count2 = 0;
-    map<long, int>::iterator iter;
+    unordered_map<long, int>::iterator iter;
     //TODO: handle small difference caused by INDEL
     for(iter = kmerStat.begin(); iter!=kmerStat.end(); iter++){
         if(iter->first != 0 && iter->second > count1){
