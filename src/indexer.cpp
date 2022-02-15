@@ -1,6 +1,7 @@
 #include "indexer.h"
 #include "util.h"
 #include <memory.h>
+#include "globalsettings.h"
 
 const int KMER = 16;
 // 512M bloom filter
@@ -127,7 +128,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
         // is a dupe
         if(gp.contig < 0) {
             // too much keys in this dupe, then skip it
-            if(mDupeList[gp.position].size() > 10)
+            if(mDupeList[gp.position].size() > GlobalSettings::skipKeyDupThreshold)
                 continue;
             for(int g=0; g<mDupeList[gp.position].size();g++) {
                 long gplong = gp2long(shift(mDupeList[gp.position][g], i));
@@ -162,7 +163,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
             count2 = iter->second;
         }  
     }
-    if(count1 * step < 40 || count2 * step < 20){
+    if(count1 * step < GlobalSettings::majorGeneKeyRequirement || count2 * step < GlobalSettings::minorGeneKeyRequirement){
         // return an null list
         return vector<SeqMatch>();
     }
@@ -209,7 +210,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
             mismatches++;
     }
 
-    if(mismatches>10){
+    if(mismatches>GlobalSettings::mismatchThreshold){
         // too many mismatch indicates not a real fusion
         return vector<SeqMatch>();
     }
