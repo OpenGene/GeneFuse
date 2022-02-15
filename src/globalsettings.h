@@ -34,6 +34,10 @@ public:
     static int deletionThreshold;
     static bool outputDeletions;
     static bool outputUntranslated;
+    static int skipKeyDupThreshold;
+    static int majorGeneKeyRequirement;
+    static int minorGeneKeyRequirement;
+    static int mismatchThreshold;
 };
 
 

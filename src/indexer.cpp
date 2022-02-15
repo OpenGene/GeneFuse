@@ -106,7 +106,7 @@ void Indexer::indexContig(int ctg, string seq, int start) {
 }
 
 vector<SeqMatch> Indexer::mapRead(Read* r) {
-    unordered_map<long, int> kmerStat;
+    map<long, int> kmerStat;
     kmerStat[0]=0;
     string seq = r->mSeq.mStr;
     const int step = 2;
@@ -149,7 +149,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
     int count1 = 0;
     long gp2 = 0;
     int count2 = 0;
-    unordered_map<long, int>::iterator iter;
+    map<long, int>::iterator iter;
     //TODO: handle small difference caused by INDEL
     for(iter = kmerStat.begin(); iter!=kmerStat.end(); iter++){
         if(iter->first != 0 && iter->second > count1){
