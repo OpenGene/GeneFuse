@@ -38,5 +38,9 @@ static const int PACK_SIZE = 1000;
 // if the number of in memory packs is full, the producer thread should sleep
 static const int PACK_IN_MEM_LIMIT = 100;
 
+// the key dup in normal level will be kept, in high level will be skipped
+static const int DUPE_NORMAL_LEVEL = -1;
+static const int DUPE_HIGH_LEVEL = -2;
+
 
 #endif /* COMMON_H */

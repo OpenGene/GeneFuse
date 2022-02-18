@@ -85,8 +85,16 @@ void Indexer::indexContig(int ctg, string seq, int start) {
         if(mKmerPos.count(kmer) >0 ){
             GenePos gp = mKmerPos[kmer];
             // already marked as a dupe
-            if(gp.contig < 0) {
-                mDupeList[gp.position].push_back(site);
+            if(gp.contig == DUPE_HIGH_LEVEL){
+                // skip it since it's already a high level dupe
+                continue;
+            } else if(gp.contig == DUPE_NORMAL_LEVEL) {
+                if(mDupeList[gp.position].size() >= GlobalSettings::skipKeyDupThreshold) {
+                    mKmerPos[kmer].contig = DUPE_HIGH_LEVEL;
+                    mDupeList[gp.position]=vector<GenePos>();
+                }
+                else
+                    mDupeList[gp.position].push_back(site);
             } else {
                 // else make a new dupe entry
                 vector<GenePos> gps;
@@ -94,7 +102,7 @@ void Indexer::indexContig(int ctg, string seq, int start) {
                 gps.push_back(site);
                 mDupeList.push_back(gps);
                 // and mark it as a dupe
-                mKmerPos[kmer].contig = -1;
+                mKmerPos[kmer].contig = DUPE_NORMAL_LEVEL;
                 mKmerPos[kmer].position = mDupeList.size() -1;
                 mUniquePos--;
                 mDupePos++;
@@ -126,10 +134,10 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
         }
         GenePos gp = mKmerPos[kmer];
         // is a dupe
-        if(gp.contig < 0) {
+        if(gp.contig == DUPE_HIGH_LEVEL) {
             // too much keys in this dupe, then skip it
-            if(mDupeList[gp.position].size() > GlobalSettings::skipKeyDupThreshold)
-                continue;
+            continue;
+        } else if(gp.contig == DUPE_NORMAL_LEVEL) {
             for(int g=0; g<mDupeList[gp.position].size();g++) {
                 long gplong = gp2long(shift(mDupeList[gp.position][g], i));
                 if(kmerStat.count(gplong)==0)
@@ -137,7 +145,7 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
                 else
                     kmerStat[gplong] += 1;
             }
-        } else {
+        } else { // not a dupe
             long gplong = gp2long(shift(gp, i));
             if(kmerStat.count(gplong)==0)
                 kmerStat[gplong] = 1;
@@ -183,7 +191,10 @@ vector<SeqMatch> Indexer::mapRead(Read* r) {
             continue;
         GenePos gp = mKmerPos[kmer];
         // is a dupe
-        if(gp.contig < 0) {
+        if(gp.contig == DUPE_HIGH_LEVEL) {
+            // too much keys in this dupe, then skip it
+            continue;
+        } else if(gp.contig == DUPE_NORMAL_LEVEL) {
             for(int g=0; g<mDupeList[gp.position].size();g++) {
                 long gplong = gp2long(shift(mDupeList[gp.position][g], i));
                 if(abs(gplong - gp1) <= 1)
