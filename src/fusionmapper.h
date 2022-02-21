@@ -27,6 +27,11 @@ public:
     void freeMatches();
     void clusterMatches();
     void addMatch(Match* m);
+    void sortFusionResults();
+    inline static bool moreReads(const FusionResult r1, const FusionResult r2)
+    {
+        return r1.mUnique > r2.mUnique || (r1.mUnique == r2.mUnique && r1.mMatches.size() > r2.mMatches.size());
+    }
 
 private:
     void init();

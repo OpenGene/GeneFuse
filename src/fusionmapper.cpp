@@ -314,5 +314,10 @@ void FusionMapper::clusterMatches() {
             }
         }
     }
+    sortFusionResults();
     loginfo("found " + int2str(mFusionResults.size()) + " fusions");
+}
+
+void FusionMapper::sortFusionResults() {
+    sort(mFusionResults.begin(), mFusionResults.end(), moreReads);
 }
